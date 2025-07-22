@@ -79,6 +79,20 @@ End Code
         .nav-link:not(.active):hover {
             background-color: #374151; /* bg-gray-700 */
         }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 1s ease;
+        }
+
+            .submenu.open {
+                max-height: 500px; /* suficiente para contener los hijos */
+            }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
     </style>
 
     @RenderSection("Head", required:=False)
@@ -95,51 +109,63 @@ End Code
                 </div>
                 <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Menú Principal</h2>
                 <nav class="flex flex-col gap-2">
+
                     <a href="@Url.Action("Index", "Home")"
-                       class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-colors @(If(currentController = "home", "active", ""))"
-                       data-section="dashboard">
+                       class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-colors @(If(currentController = "home", "active", ""))">
                         <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
                     </a>
 
-                    <a href="@Url.Action("Index", "Torneo")"
-                       class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-colors @(If(currentController = "torneo", "active", ""))">
-                        <i data-lucide="trophy"></i><span>Torneos</span>
-                    </a>
+                    <div class="menu-group">
+                        <button class="nav-link flex items-center justify-between gap-2 px-4 py-2 rounded-lg w-full transition-colors"
+                                onclick="toggleMenu('submenu-futbol', 'icon-futbol')">
+                            <span class="flex items-center gap-2">
+                                <i data-lucide="dribbble"></i><span>Fútbol</span>
+                            </span>
+                            <i data-lucide="chevron-down" id="icon-futbol" class="transition-transform duration-300"></i>
+                        </button>
 
-                    <a href="@Url.Action("Index", "Equipos")"
-                       class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-colors @(If(currentController = "equipos", "active", ""))">
-                        <i data-lucide="users"></i><span>Equipos</span>
-                    </a>
+                        <div id="submenu-futbol" class="submenu flex flex-col gap-3 ml-6 overflow-hidden max-h-0 transition-[max-height] duration-300">
+                            <a href="@Url.Action("Index", "Torneo")" class="nav-link flex items-center gap-3 px-2 py-1 rounded-lg transition-colors">
+                                <i data-lucide="trophy"></i><span>Torneos</span>
+                            </a>
+                            <a href="@Url.Action("Index", "Equipos")" class="nav-link flex items-center gap-3 px-2 py-1 rounded-lg transition-colors">
+                                <i data-lucide="users"></i><span>Equipos</span>
+                            </a>
+                            <a href="@Url.Action("Index", "Partido")" class="nav-link flex items-center gap-3 px-2 py-1 rounded-lg transition-colors">
+                                <i data-lucide="calendar-days"></i><span>Partidos</span>
+                            </a>
+                            <a href="@Url.Action("Index", "Palmares")" class="nav-link flex items-center gap-3 px-2 py-1 rounded-lg transition-colors">
+                                <i data-lucide="award"></i><span>Palmarés</span>
+                            </a>
+                        </div>
+                    </div>
 
-                    <a href="@Url.Action("Index", "Partido")"
-                       class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-colors @(If(currentController = "partido", "active", ""))">
-                        <i data-lucide="calendar-days"></i><span>Partidos</span>
-                    </a>
 
-                    <a href="@Url.Action("Index", "Confederaciones")"
-                       class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-colors @(If(currentController = "confederaciones", "active", ""))">
-                        <i data-lucide="globe-2"></i><span>Confederaciones</span>
-                    </a>
+                    <div class="menu-group">
+                        <button class="nav-link flex items-center justify-between gap-2 px-4 py-2 rounded-lg w-full transition-colors"
+                                onclick="toggleMenu('submenu-mundo', 'icon-mundo')">
+                            <span class="flex items-center gap-2">
+                                <i data-lucide="globe"></i><span>Mundo</span>
+                            </span>
+                            <i data-lucide="chevron-down" id="icon-mundo" class="transition-transform duration-300"></i>
+                        </button>
 
-                    <a href="@Url.Action("Index", "Paises")"
-                       class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-colors @(If(currentController = "paises", "active", ""))">
-                        <i data-lucide="map-pin"></i><span>Países</span>
-                    </a>
+                        <div id="submenu-mundo" class="submenu flex flex-col gap-3 ml-6 overflow-hidden max-h-0 transition-[max-height] duration-300">
+                            <a href="@Url.Action("Index", "Confederaciones")" class="nav-link flex items-center gap-3 px-2 py-1 rounded-lg transition-colors">
+                                <i data-lucide="globe-2"></i><span>Confederaciones</span>
+                            </a>
+                            <a href="@Url.Action("Index", "Paises")" class="nav-link flex items-center gap-3 px-2 py-1 rounded-lg transition-colors">
+                                <i data-lucide="map-pin"></i><span>Países</span>
+                            </a>
+                            <a href="@Url.Action("Index", "Region")" class="nav-link flex items-center gap-3 px-2 py-1 rounded-lg transition-colors">
+                                <i data-lucide="map"></i><span>Regiones</span>
+                            </a>
+                            <a href="@Url.Action("Index", "Ciudad")" class="nav-link flex items-center gap-3 px-2 py-1 rounded-lg transition-colors">
+                                <i data-lucide="building"></i><span>Ciudades</span>
+                            </a>
+                        </div>
+                    </div>
 
-                    <a href="@Url.Action("Index", "Region")"
-                       class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-colors @(If(currentController = "region", "active", ""))">
-                        <i data-lucide="map"></i><span>Regiones</span>
-                    </a>
-
-                    <a href="@Url.Action("Index", "Ciudad")"
-                       class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-colors @(If(currentController = "ciudad", "active", ""))">
-                        <i data-lucide="building"></i><span>Ciudades</span>
-                    </a>
-
-                    <a href="@Url.Action("Index", "Palmares")"
-                       class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-colors @(If(currentController = "palmares", "active", ""))">
-                        <i data-lucide="award"></i><span>Palmarés</span>
-                    </a>
 
                     <a href="@Url.Action("Index", "Estadisticas")"
                        class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-colors @(If(currentController = "estadisticas", "active", ""))">
@@ -152,7 +178,9 @@ End Code
                        class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition-colors @(If(currentController = "configuracion", "active", ""))">
                         <i data-lucide="settings"></i><span>Configuración</span>
                     </a>
+
                 </nav>
+
             </div>
             <div class="text-center text-gray-500 text-sm">
                 <p>&copy; 2025 - SGTF</p>
@@ -169,10 +197,26 @@ End Code
     </footer>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        function toggleMenu(id, iconId) {
+            const submenu = document.getElementById(id);
+            const icon = document.getElementById(iconId);
+
+            if (submenu.classList.contains('max-h-0')) {
+                submenu.classList.remove('max-h-0');
+                submenu.classList.add('max-h-96');
+                icon.classList.add('rotate-180');
+            } else {
+                submenu.classList.remove('max-h-96');
+                submenu.classList.add('max-h-0');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
             lucide.createIcons();
         });
     </script>
+
 
     @RenderSection("Scripts", required:=False)
 </body>

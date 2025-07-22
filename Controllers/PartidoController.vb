@@ -34,9 +34,11 @@ Namespace Controllers
             Dim respuesta As Integer
             Try
                 If objPartido.PartidoID = 0 Then
+                    ' Para nuevos registros, manejar cadena vacía a Nothing (null)
+                    If String.IsNullOrEmpty(objPartido.Grupo) Then
+                        objPartido.Grupo = Nothing
+                    End If
                     db.Partido.Add(objPartido)
-                    db.SaveChanges()
-                    respuesta = 1
                 Else
                     Dim registro = (From p In db.Partido
                                     Where p.PartidoID = objPartido.PartidoID
@@ -51,14 +53,36 @@ Namespace Controllers
                         registro.NroFecha = objPartido.NroFecha
                         registro.AñoParticipacion = objPartido.AñoParticipacion
                         registro.Fase = objPartido.Fase
-                        registro.Grupo = objPartido.Grupo
+
+                        If String.IsNullOrEmpty(objPartido.Grupo) Then
+                            registro.Grupo = Nothing
+                        Else
+                            registro.Grupo = objPartido.Grupo
+                        End If
+
                         registro.Estado = objPartido.Estado
-                        db.SaveChanges()
-                        respuesta = 1
+                    Else
+                        ' Manejar el caso donde el registro no se encuentra para actualizar
+                        respuesta = 0
+                        Return respuesta
                     End If
                 End If
+
+                db.SaveChanges() ' Guarda los cambios del partido primero
+
+                ' IMPORTANTE: Llama al stored procedure para actualizar TablaPosiciones
+                ' SOLO si el partido está marcado como 'Jugado' o 'Finalizado'.
+                ' Asegúrate de que el estado que usas en tu aplicación ('Jugado' o 'Finalizado')
+                ' coincida con lo que el stored procedure 'ActualizarTablaPosiciones' espera.
+                If objPartido.Estado = "Finalizado" OrElse objPartido.Estado = "Finalizado" Then
+                    db.Database.ExecuteSqlCommand("EXEC ActualizarTablaPosiciones")
+                End If
+
+                respuesta = 1 ' Indicar éxito
             Catch ex As Exception
-                respuesta = 0
+                ' Registra la excepción para depuración (ej. ex.Message, ex.StackTrace)
+                ' Console.WriteLine("Error al guardar partido: " & ex.Message)
+                respuesta = 0 ' Indicar fallo
             End Try
             Return respuesta
         End Function

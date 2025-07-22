@@ -10,7 +10,6 @@ End Code
     </button>
 </div>
 
-<!-- Filtros -->
 <div class="card p-4 mb-6 rounded-lg">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <input id="filter-torneo" type="text" placeholder="Filtrar por torneo..." class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400">
@@ -23,16 +22,14 @@ End Code
         <select id="filter-estado" class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
             <option value="">Todos los Estados</option>
             <option value="Pendiente">Pendiente</option>
-            <option value="Jugado">Jugado</option>
+            <option value="Finalizado">Finalizado</option>
             <option value="Suspendido">Suspendido</option>
         </select>
     </div>
 </div>
 
-<!-- Tabla dinámica -->
 <div id="DIVPartido" class="overflow-x-auto card rounded-lg"></div>
 
-<!-- Modal Partido -->
 <div id="modalPartido" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden z-50">
     <div id="modalPartidoContent" class="bg-gray-800 w-full max-w-2xl rounded-lg shadow-lg p-8 transform transition-all scale-95 opacity-0">
         <h3 id="modal-title" class="text-2xl font-bold mb-6 text-white">Nuevo Partido</h3>
@@ -73,16 +70,25 @@ End Code
                     <select id="txtFase" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white" required>
                         <option value="">Seleccionar fase...</option>
                         <option value="Primera Ronda">Primera Ronda</option>
-                        <option value="Fase 1">Fase 1</option>
                         <option value="Segunda Ronda">Segunda Ronda</option>
+                        <option value="Terecera Ronda">Terecera Ronda</option>
+                        <option value="Grupos">Fase de Grupos</option>
+                        <option value="Semifinal">Semifinal</option>
+                        <option value="Final">Final</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2">Grupo</label>
-                    <select id="txtGrupo" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white" required>
-                        <option value="">Seleccionar fase...</option>
+                    <select id="txtGrupo" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                        <option value="">N/A o Seleccionar Grupo...</option>
                         <option value="A">A</option>
                         <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                        <option value="F">F</option>
+                        <option value="G">G</option>
+                        <option value="H">H</option>
                     </select>
                 </div>
                 <div>
@@ -90,7 +96,7 @@ End Code
                     <select id="txtEstado" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white" required>
                         <option value="">Seleccionar estado...</option>
                         <option value="Pendiente">Pendiente</option>
-                        <option value="Jugado">Jugado</option>
+                        <option value="Finalizado">Finalizado</option>
                         <option value="Suspendido">Suspendido</option>
                     </select>
                 </div>

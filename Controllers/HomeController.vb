@@ -31,7 +31,7 @@ Namespace Controllers
 
         Function ResultadosRecientes() As JsonResult
             Dim partidos = (From p In db.Partido
-                            Where p.Estado = "Jugado"
+                            Where p.Estado = "Finalizado"
                             Order By p.PartidoID Descending
                             Take 3
                             Select New With {
@@ -48,7 +48,7 @@ Namespace Controllers
             Try
                 ' Crear lista de participaciones por equipo
                 Dim participaciones = (From p In db.Partido.AsEnumerable()
-                                       Where p.Estado = "Jugado"
+                                       Where p.Estado = "Finalizado"
                                        Select New With {
                                    .EquipoID = p.TorneoEquipo.Equipo.EquipoID,
                                    .Nombre = p.TorneoEquipo.Equipo.Nombre,
@@ -57,7 +57,7 @@ Namespace Controllers
                                    .EsGanador = p.GolesLocal > p.GolesVisitante
                                }).Union(
                                From p In db.Partido.AsEnumerable()
-                               Where p.Estado = "Jugado"
+                               Where p.Estado = "Finalizado"
                                Select New With {
                                    .EquipoID = p.TorneoEquipo1.Equipo.EquipoID,
                                    .Nombre = p.TorneoEquipo1.Equipo.Nombre,

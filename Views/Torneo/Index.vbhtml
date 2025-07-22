@@ -10,7 +10,6 @@ End Code
     </button>
 </div>
 
-<!-- Filtros -->
 <div class="card p-4 mb-6 rounded-lg">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <input id="filter-name" type="text" placeholder="Filtrar por nombre..." class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400">
@@ -39,10 +38,23 @@ End Code
     </div>
 </div>
 
-<!-- Tabla dinámica -->
-<div id="DIVTorneo" class="overflow-x-auto card rounded-lg"></div>
+<div id="DIVTorneo" class="overflow-x-auto card rounded-lg">
+    <table class="min-w-full text-sm text-left text-gray-400">
+        <thead class="text-xs uppercase bg-gray-700 text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">Nombre</th>
+                <th scope="col" class="px-6 py-3">Tipo de Torneo</th>
+                <th scope="col" class="px-6 py-3">Categoría</th>
+                <th scope="col" class="px-6 py-3">Estado</th>
+                <th scope="col" class="px-6 py-3">Ciudad</th>
+                <th scope="col" class="px-6 py-3">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tblTorneosBody">
+        </tbody>
+    </table>
+</div>
 
-<!-- Modal Torneo -->
 <div id="modalTorneo" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden z-50">
     <div id="modalTorneoContent" class="bg-gray-800 w-full max-w-2xl rounded-lg shadow-lg p-8 transform transition-all scale-95 opacity-0">
         <h3 id="modal-title" class="text-2xl font-bold mb-6 text-white">Nuevo Torneo</h3>
@@ -83,10 +95,10 @@ End Code
                         <option value="">Seleccionar...</option>
                         <option value="Activo">Activo</option>
                         <option value="Extinto">Extinto</option>
+                        <option value="Activo">Suspendido</option>
                     </select>
                 </div>
 
-                <!-- ComboBox Ciudad -->
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2">Ciudad</label>
                     <select id="txtCiudadID" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -94,7 +106,6 @@ End Code
                     </select>
                 </div>
 
-                <!-- ComboBox País -->
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2">País</label>
                     <select id="txtPaisID" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -102,7 +113,6 @@ End Code
                     </select>
                 </div>
 
-                <!-- ComboBox Región -->
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2">Región</label>
                     <select id="txtRegionID" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -110,7 +120,6 @@ End Code
                     </select>
                 </div>
 
-                <!-- ComboBox Confederación -->
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2">Confederación</label>
                     <select id="txtConfederacionID" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -194,4 +203,99 @@ End Code
 @section Scripts
     <script src="/scripts/jquery-3.7.1.min.js"></script>
     <script src="~/scripts/js/Torneo.js"></script>
-End Section
+
+    <script>
+        // Function to load tournaments into the table
+        function Listar() {
+            $.ajax({
+                url: '@Url.Action("ListarTorneos", "Torneo")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    var tbody = $('#tblTorneosBody');
+                    tbody.empty(); // Clear existing rows
+
+                    if (data && data.length > 0) {
+                        $.each(data, function (i, item) {
+var row = 
+    <tr class="${i % 2 === 0 ? 'table-row-even' : 'table-row-odd'} border-b border-gray-700">
+        <td class="px-6 py-4 font-medium text-white">${item.Nombre}</td>
+        <td class="px-6 py-4">${item.TipoTorneo}</td>
+        <td class="px-6 py-4">${item.Categoria}</td>
+        <td class="px-6 py-4">${item.Estado}</td>
+        <td class="px-6 py-4">${item.Ciudad}</td>
+        <td class="px-6 py-4 text-center">
+            <div class="flex items-center justify-center gap-2">
+                <button class="p-2 rounded-md hover:bg-gray-600" title="Ver Tabla de Posiciones"
+                        onclick="VerTablaPosiciones(${item.TorneoID}, '${item.Nombre.replace(/'/g, "\\'")}')">
+                    <i data-lucide="award" class="w-4 h-4 text-purple-400"></i>
+                </button>
+
+                <button class="p-2 rounded-md hover:bg-gray-600" title="Editar" onclick="AbrirModal(${item.TorneoID})">
+                    <i data-lucide="edit" class="w-4 h-4 text-yellow-400"></i>
+                </button>
+
+                <button class="p-2 rounded-md hover:bg-gray-600" title="Eliminar" onclick="ConfirmarEliminar(${item.TorneoID})">
+                    <i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i>
+                </button>
+
+                <button class="p-2 rounded-md hover:bg-gray-600" title="Asignar Equipos" onclick="alert('Asignar equipos no implementado')">
+                    <i data-lucide="users" class="w-4 h-4 text-green-400"></i>
+                </button>
+                <button class="p-2 rounded-md hover:bg-gray-600" title="Generar Fixture" onclick="alert('Generar fixture no implementado')">
+                    <i data-lucide="calendar-plus" class="w-4 h-4 text-purple-400"></i>
+                </button>
+            </div>
+        </td>
+    </tr >
+    ;
+                            tbody.append(row);
+                        });
+                    } else {
+                        tbody.append('<tr><td colspan="6" class="px-6 py-4 text-center text-gray-400">No se encontraron torneos.</td></tr>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al cargar torneos:", error);
+                    $('#tblTorneosBody').empty().append('<tr><td colspan="6" class="px-6 py-4 text-center text-red-400">Error al cargar los torneos.</td></tr>');
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            Listar(); // Call Listar on page load to populate the table
+            CargarComboboxes(); // Assuming this function is defined in Torneo.js to load city, country, etc.
+        });
+
+        // Ensure AbrirModal and CerrarModal (for the tournament form modal) have transitions
+        window.AbrirModal = function (torneoID = 0) { // Added default parameter for new creation
+            // Reset form and title for new tournament
+            $('#formTorneo')[0].reset();
+            $('#txtTorneoID').val(0);
+            $('#modal-title').text('Nuevo Torneo');
+
+            if (torneoID > 0) {
+                // If editing, populate form with existing data
+                Recuperar(torneoID); // This function should populate the form fields
+                $('#modal-title').text('Editar Torneo');
+            }
+
+            $('#modalTorneo').removeClass('hidden');
+            $('#modalTorneoContent').removeClass('opacity-0 scale-95').addClass('opacity-100 scale-100');
+        };
+
+        window.CerrarModal = function () {
+            $('#modalTorneoContent').removeClass('opacity-100 scale-100').addClass('opacity-0 scale-95');
+            setTimeout(() => {
+                $('#modalTorneo').addClass('hidden');
+            }, 300); // Allow time for transition
+        };
+        function VerTablaPosiciones(torneoID, nombre) {
+            const encodedNombre = encodeURIComponent(nombre);
+            window.location.href = `/Torneo/TablaPosiciones?torneoID=${torneoID}&torneoNombre=${encodedNombre}`;
+        }
+
+
+        // You'll need to ensure your Torneo.js file has the implementation for Guardar(), Recuperar(), Eliminar(), and CargarComboboxes()
+    </script>
+    End Section

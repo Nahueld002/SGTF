@@ -60,9 +60,10 @@ function crearListado(data) {
                 <td class="p-4">${torneo.Ciudad}</td>
                 <td class="p-4 text-center">
                 <div class="flex items-center justify-center gap-2">
-                    <button class="p-2 rounded-md hover:bg-gray-600" title="Ver Detalles" onclick="alert('Ver detalles no implementado')">
-                        <i data-lucide="eye" class="w-4 h-4 text-blue-400"></i>
-                    </button>
+                    <button class="p-2 rounded-md hover:bg-gray-600" title="Ver Detalles"
+                            onclick="window.location.href='/Torneo/TablaPosiciones?torneoID=${torneo.TorneoID}&torneoNombre=${encodeURIComponent(torneo.Nombre)}'">
+                            <i data-lucide="eye" class="w-4 h-4 text-blue-400"></i>
+                        </button>
                     <button class="p-2 rounded-md hover:bg-gray-600" title="Editar" onclick="AbrirEditar(${torneo.TorneoID})">
                         <i data-lucide="edit" class="w-4 h-4 text-yellow-400"></i>
                     </button>
