@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="22bbb5b62a81458ca19dc35ce94d9c00" Name="Diagram1">
+        <EntityTypeShape EntityType="FutbolDB2Model.Ciudad" Width="1.5" PointX="7.5" PointY="15" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.Confederacion" Width="1.5" PointX="0.75" PointY="15.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.Equipo" Width="1.5" PointX="9.75" PointY="14.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.LogELO" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.Pais" Width="1.5" PointX="3" PointY="14.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.Palmares" Width="1.5" PointX="15" PointY="15.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.Partido" Width="1.5" PointX="20.25" PointY="12.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.Region" Width="1.5" PointX="5.25" PointY="14.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.TablaPosiciones" Width="1.5" PointX="18" PointY="14.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.Torneo" Width="1.5" PointX="12.75" PointY="13.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.TorneoAscenso" Width="1.5" PointX="20.25" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.TorneoDescensos" Width="1.5" PointX="20.25" PointY="17.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.TorneoEquipo" Width="1.5" PointX="15" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.TorneoPais" Width="1.5" PointX="18" PointY="11.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FutbolDB2Model.TorneoResultados" Width="1.5" PointX="15" PointY="18.75" IsExpanded="true" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Ciudad__RegionID__4222D4EF" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Equipo__CiudadID__5535A963" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Torneo__CiudadID__48CFD27E" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Pais__Confederac__3B75D760" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Torneo__Confeder__45F365D3" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Equipo__RegionID__5441852A" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Palmares__Equipo__70DDC3D8" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TablaPosi__Equip__03F0984C" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoEqu__Equip__5AEE82B9" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoRes__Campe__5FB337D6" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoRes__Subca__60A75C0F" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Region__PaisID__3E52440B" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Torneo__PaisID__46E78A0C" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoPai__PaisI__4D94879B" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Palmares__Torneo__71D1E811" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Partido__EquipoL__76969D2E" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Partido__EquipoV__778AC167" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Partido__TorneoI__75A278F5" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__Torneo__RegionID__47DBAE45" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TablaPosi__Torne__02FC7413" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoAsc__Torne__6C190EBB" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoAsc__Torne__6D0D32F4" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoDes__Torne__66603565" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoDes__Torne__6754599E" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoEqu__Torne__59FA5E80" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoPai__Torne__4CA06362" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoRes__Torne__5EBF139D" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoAsc__Ascen__6B24EA82" ManuallyRouted="false" />
+        <AssociationConnector Association="FutbolDB2Model.FK__TorneoDes__Desce__656C112C" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

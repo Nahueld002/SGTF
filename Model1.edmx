@@ -1,0 +1,1584 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="FutbolDB2Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Ciudad">
+          <Key>
+            <PropertyRef Name="CiudadID" />
+          </Key>
+          <Property Name="CiudadID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="RegionID" Type="int" Nullable="false" />
+          <Property Name="EsCapital" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Confederacion">
+          <Key>
+            <PropertyRef Name="ConfederacionID" />
+          </Key>
+          <Property Name="ConfederacionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Equipo">
+          <Key>
+            <PropertyRef Name="EquipoID" />
+          </Key>
+          <Property Name="EquipoID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="CodigoEquipo" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="RegionID" Type="int" />
+          <Property Name="CiudadID" Type="int" />
+          <Property Name="AñoFundacion" Type="smallint" />
+          <Property Name="ELO" Type="float" />
+          <Property Name="TipoEquipo" Type="nvarchar" MaxLength="100" />
+          <Property Name="Estado" Type="nvarchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="LogELO">
+          <Key>
+            <PropertyRef Name="LogID" />
+          </Key>
+          <Property Name="LogID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PartidoID" Type="int" />
+          <Property Name="EquipoID" Type="int" />
+          <Property Name="ELOAnterior" Type="float" />
+          <Property Name="ELONuevo" Type="float" />
+          <Property Name="Fecha" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Pais">
+          <Key>
+            <PropertyRef Name="PaisID" />
+          </Key>
+          <Property Name="PaisID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CodigoFIFA" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="ConfederacionID" Type="int" Nullable="false" />
+          <Property Name="PerteneceFIFA" Type="bit" />
+        </EntityType>
+        <EntityType Name="Palmares">
+          <Key>
+            <PropertyRef Name="PalmaresID" />
+          </Key>
+          <Property Name="PalmaresID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AñoTitulo" Type="smallint" Nullable="false" />
+          <Property Name="EquipoID" Type="int" Nullable="false" />
+          <Property Name="TorneoID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Partido">
+          <Key>
+            <PropertyRef Name="PartidoID" />
+          </Key>
+          <Property Name="PartidoID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TorneoID" Type="int" Nullable="false" />
+          <Property Name="EquipoLocalTorneoEquipoID" Type="int" Nullable="false" />
+          <Property Name="EquipoVisitanteTorneoEquipoID" Type="int" Nullable="false" />
+          <Property Name="GolesLocal" Type="int" />
+          <Property Name="GolesVisitante" Type="int" />
+          <Property Name="NroFecha" Type="int" Nullable="false" />
+          <Property Name="AñoParticipacion" Type="smallint" Nullable="false" />
+          <Property Name="Fase" Type="nvarchar" MaxLength="50" />
+          <Property Name="Grupo" Type="nvarchar" MaxLength="10" />
+          <Property Name="Estado" Type="nvarchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Region">
+          <Key>
+            <PropertyRef Name="RegionID" />
+          </Key>
+          <Property Name="RegionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="TipoRegion" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="PaisID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TablaPosiciones">
+          <Key>
+            <PropertyRef Name="TablaPosicionesID" />
+          </Key>
+          <Property Name="TablaPosicionesID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TorneoID" Type="int" Nullable="false" />
+          <Property Name="AñoParticipacion" Type="smallint" Nullable="false" />
+          <Property Name="EquipoID" Type="int" Nullable="false" />
+          <Property Name="PJ" Type="int" Nullable="false" />
+          <Property Name="PG" Type="int" Nullable="false" />
+          <Property Name="PE" Type="int" Nullable="false" />
+          <Property Name="PP" Type="int" Nullable="false" />
+          <Property Name="GF" Type="int" Nullable="false" />
+          <Property Name="GC" Type="int" Nullable="false" />
+          <Property Name="DG" Type="int" Nullable="false" />
+          <Property Name="PTS" Type="int" Nullable="false" />
+          <Property Name="Fase" Type="nvarchar" MaxLength="50" />
+          <Property Name="Grupo" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Torneo">
+          <Key>
+            <PropertyRef Name="TorneoID" />
+          </Key>
+          <Property Name="TorneoID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="TipoTorneo" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Categoria" Type="nvarchar" MaxLength="50" />
+          <Property Name="ConfederacionID" Type="int" />
+          <Property Name="PaisID" Type="int" />
+          <Property Name="RegionID" Type="int" />
+          <Property Name="CiudadID" Type="int" />
+          <Property Name="Estado" Type="nvarchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TorneoAscenso">
+          <Key>
+            <PropertyRef Name="TorneoAscensoID" />
+          </Key>
+          <Property Name="TorneoAscensoID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AscensoTorneoEquipoID" Type="int" Nullable="false" />
+          <Property Name="TorneoOrigenID" Type="int" Nullable="false" />
+          <Property Name="TorneoDestinoID" Type="int" Nullable="false" />
+          <Property Name="AñoAscenso" Type="smallint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TorneoDescensos">
+          <Key>
+            <PropertyRef Name="TorneoDescensosID" />
+          </Key>
+          <Property Name="TorneoDescensosID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DescensoTorneoEquipoID" Type="int" Nullable="false" />
+          <Property Name="TorneoOrigenID" Type="int" Nullable="false" />
+          <Property Name="TorneoDestinoID" Type="int" Nullable="false" />
+          <Property Name="AñoDescenso" Type="smallint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TorneoEquipo">
+          <Key>
+            <PropertyRef Name="TorneoEquipoID" />
+          </Key>
+          <Property Name="TorneoEquipoID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TorneoID" Type="int" Nullable="false" />
+          <Property Name="EquipoID" Type="int" Nullable="false" />
+          <Property Name="AñoParticipacion" Type="smallint" Nullable="false" />
+          <Property Name="Fase" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Grupo" Type="nvarchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="TorneoPais">
+          <Key>
+            <PropertyRef Name="TorneoPaisID" />
+          </Key>
+          <Property Name="TorneoPaisID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TorneoID" Type="int" Nullable="false" />
+          <Property Name="PaisID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TorneoResultados">
+          <Key>
+            <PropertyRef Name="TorneoResultadosID" />
+          </Key>
+          <Property Name="TorneoResultadosID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TorneoID" Type="int" Nullable="false" />
+          <Property Name="AñoTorneo" Type="smallint" Nullable="false" />
+          <Property Name="CampeonEquipoID" Type="int" />
+          <Property Name="SubcampeonEquipoID" Type="int" />
+          <Property Name="Observaciones" Type="nvarchar" MaxLength="250" />
+          <Property Name="Era" Type="nvarchar" MaxLength="25" />
+        </EntityType>
+        <Association Name="FK__Ciudad__RegionID__4222D4EF">
+          <End Role="Region" Type="Self.Region" Multiplicity="1" />
+          <End Role="Ciudad" Type="Self.Ciudad" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Region">
+              <PropertyRef Name="RegionID" />
+            </Principal>
+            <Dependent Role="Ciudad">
+              <PropertyRef Name="RegionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Equipo__CiudadID__5535A963">
+          <End Role="Ciudad" Type="Self.Ciudad" Multiplicity="0..1" />
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ciudad">
+              <PropertyRef Name="CiudadID" />
+            </Principal>
+            <Dependent Role="Equipo">
+              <PropertyRef Name="CiudadID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Equipo__RegionID__5441852A">
+          <End Role="Region" Type="Self.Region" Multiplicity="0..1" />
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Region">
+              <PropertyRef Name="RegionID" />
+            </Principal>
+            <Dependent Role="Equipo">
+              <PropertyRef Name="RegionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Pais__Confederac__3B75D760">
+          <End Role="Confederacion" Type="Self.Confederacion" Multiplicity="1" />
+          <End Role="Pais" Type="Self.Pais" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Confederacion">
+              <PropertyRef Name="ConfederacionID" />
+            </Principal>
+            <Dependent Role="Pais">
+              <PropertyRef Name="ConfederacionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Palmares__Equipo__70DDC3D8">
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="1" />
+          <End Role="Palmares" Type="Self.Palmares" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipo">
+              <PropertyRef Name="EquipoID" />
+            </Principal>
+            <Dependent Role="Palmares">
+              <PropertyRef Name="EquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Palmares__Torneo__71D1E811">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="Palmares" Type="Self.Palmares" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="Palmares">
+              <PropertyRef Name="TorneoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Partido__EquipoL__76969D2E">
+          <End Role="TorneoEquipo" Type="Self.TorneoEquipo" Multiplicity="1" />
+          <End Role="Partido" Type="Self.Partido" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TorneoEquipo">
+              <PropertyRef Name="TorneoEquipoID" />
+            </Principal>
+            <Dependent Role="Partido">
+              <PropertyRef Name="EquipoLocalTorneoEquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Partido__EquipoV__778AC167">
+          <End Role="TorneoEquipo" Type="Self.TorneoEquipo" Multiplicity="1" />
+          <End Role="Partido" Type="Self.Partido" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TorneoEquipo">
+              <PropertyRef Name="TorneoEquipoID" />
+            </Principal>
+            <Dependent Role="Partido">
+              <PropertyRef Name="EquipoVisitanteTorneoEquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Partido__TorneoI__75A278F5">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="Partido" Type="Self.Partido" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="Partido">
+              <PropertyRef Name="TorneoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Region__PaisID__3E52440B">
+          <End Role="Pais" Type="Self.Pais" Multiplicity="1" />
+          <End Role="Region" Type="Self.Region" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pais">
+              <PropertyRef Name="PaisID" />
+            </Principal>
+            <Dependent Role="Region">
+              <PropertyRef Name="PaisID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TablaPosi__Equip__03F0984C">
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="1" />
+          <End Role="TablaPosiciones" Type="Self.TablaPosiciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipo">
+              <PropertyRef Name="EquipoID" />
+            </Principal>
+            <Dependent Role="TablaPosiciones">
+              <PropertyRef Name="EquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TablaPosi__Torne__02FC7413">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TablaPosiciones" Type="Self.TablaPosiciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TablaPosiciones">
+              <PropertyRef Name="TorneoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Torneo__CiudadID__48CFD27E">
+          <End Role="Ciudad" Type="Self.Ciudad" Multiplicity="0..1" />
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ciudad">
+              <PropertyRef Name="CiudadID" />
+            </Principal>
+            <Dependent Role="Torneo">
+              <PropertyRef Name="CiudadID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Torneo__Confeder__45F365D3">
+          <End Role="Confederacion" Type="Self.Confederacion" Multiplicity="0..1" />
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Confederacion">
+              <PropertyRef Name="ConfederacionID" />
+            </Principal>
+            <Dependent Role="Torneo">
+              <PropertyRef Name="ConfederacionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Torneo__PaisID__46E78A0C">
+          <End Role="Pais" Type="Self.Pais" Multiplicity="0..1" />
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pais">
+              <PropertyRef Name="PaisID" />
+            </Principal>
+            <Dependent Role="Torneo">
+              <PropertyRef Name="PaisID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Torneo__RegionID__47DBAE45">
+          <End Role="Region" Type="Self.Region" Multiplicity="0..1" />
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Region">
+              <PropertyRef Name="RegionID" />
+            </Principal>
+            <Dependent Role="Torneo">
+              <PropertyRef Name="RegionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoAsc__Ascen__6B24EA82">
+          <End Role="TorneoEquipo" Type="Self.TorneoEquipo" Multiplicity="1" />
+          <End Role="TorneoAscenso" Type="Self.TorneoAscenso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TorneoEquipo">
+              <PropertyRef Name="TorneoEquipoID" />
+            </Principal>
+            <Dependent Role="TorneoAscenso">
+              <PropertyRef Name="AscensoTorneoEquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoAsc__Torne__6C190EBB">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoAscenso" Type="Self.TorneoAscenso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoAscenso">
+              <PropertyRef Name="TorneoOrigenID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoAsc__Torne__6D0D32F4">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoAscenso" Type="Self.TorneoAscenso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoAscenso">
+              <PropertyRef Name="TorneoDestinoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoDes__Desce__656C112C">
+          <End Role="TorneoEquipo" Type="Self.TorneoEquipo" Multiplicity="1" />
+          <End Role="TorneoDescensos" Type="Self.TorneoDescensos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TorneoEquipo">
+              <PropertyRef Name="TorneoEquipoID" />
+            </Principal>
+            <Dependent Role="TorneoDescensos">
+              <PropertyRef Name="DescensoTorneoEquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoDes__Torne__66603565">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoDescensos" Type="Self.TorneoDescensos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoDescensos">
+              <PropertyRef Name="TorneoOrigenID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoDes__Torne__6754599E">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoDescensos" Type="Self.TorneoDescensos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoDescensos">
+              <PropertyRef Name="TorneoDestinoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoEqu__Equip__5AEE82B9">
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="1" />
+          <End Role="TorneoEquipo" Type="Self.TorneoEquipo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipo">
+              <PropertyRef Name="EquipoID" />
+            </Principal>
+            <Dependent Role="TorneoEquipo">
+              <PropertyRef Name="EquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoEqu__Torne__59FA5E80">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoEquipo" Type="Self.TorneoEquipo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoEquipo">
+              <PropertyRef Name="TorneoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoPai__PaisI__4D94879B">
+          <End Role="Pais" Type="Self.Pais" Multiplicity="1" />
+          <End Role="TorneoPais" Type="Self.TorneoPais" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pais">
+              <PropertyRef Name="PaisID" />
+            </Principal>
+            <Dependent Role="TorneoPais">
+              <PropertyRef Name="PaisID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoPai__Torne__4CA06362">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoPais" Type="Self.TorneoPais" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoPais">
+              <PropertyRef Name="TorneoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoRes__Campe__5FB337D6">
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="0..1" />
+          <End Role="TorneoResultados" Type="Self.TorneoResultados" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipo">
+              <PropertyRef Name="EquipoID" />
+            </Principal>
+            <Dependent Role="TorneoResultados">
+              <PropertyRef Name="CampeonEquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoRes__Subca__60A75C0F">
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="0..1" />
+          <End Role="TorneoResultados" Type="Self.TorneoResultados" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipo">
+              <PropertyRef Name="EquipoID" />
+            </Principal>
+            <Dependent Role="TorneoResultados">
+              <PropertyRef Name="SubcampeonEquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoRes__Torne__5EBF139D">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoResultados" Type="Self.TorneoResultados" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoResultados">
+              <PropertyRef Name="TorneoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="FutbolDB2ModelStoreContainer">
+          <EntitySet Name="Ciudad" EntityType="Self.Ciudad" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Confederacion" EntityType="Self.Confederacion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Equipo" EntityType="Self.Equipo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LogELO" EntityType="Self.LogELO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Pais" EntityType="Self.Pais" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Palmares" EntityType="Self.Palmares" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Partido" EntityType="Self.Partido" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Region" EntityType="Self.Region" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TablaPosiciones" EntityType="Self.TablaPosiciones" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Torneo" EntityType="Self.Torneo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TorneoAscenso" EntityType="Self.TorneoAscenso" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TorneoDescensos" EntityType="Self.TorneoDescensos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TorneoEquipo" EntityType="Self.TorneoEquipo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TorneoPais" EntityType="Self.TorneoPais" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TorneoResultados" EntityType="Self.TorneoResultados" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Ciudad__RegionID__4222D4EF" Association="Self.FK__Ciudad__RegionID__4222D4EF">
+            <End Role="Region" EntitySet="Region" />
+            <End Role="Ciudad" EntitySet="Ciudad" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Equipo__CiudadID__5535A963" Association="Self.FK__Equipo__CiudadID__5535A963">
+            <End Role="Ciudad" EntitySet="Ciudad" />
+            <End Role="Equipo" EntitySet="Equipo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Equipo__RegionID__5441852A" Association="Self.FK__Equipo__RegionID__5441852A">
+            <End Role="Region" EntitySet="Region" />
+            <End Role="Equipo" EntitySet="Equipo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Pais__Confederac__3B75D760" Association="Self.FK__Pais__Confederac__3B75D760">
+            <End Role="Confederacion" EntitySet="Confederacion" />
+            <End Role="Pais" EntitySet="Pais" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Palmares__Equipo__70DDC3D8" Association="Self.FK__Palmares__Equipo__70DDC3D8">
+            <End Role="Equipo" EntitySet="Equipo" />
+            <End Role="Palmares" EntitySet="Palmares" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Palmares__Torneo__71D1E811" Association="Self.FK__Palmares__Torneo__71D1E811">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="Palmares" EntitySet="Palmares" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Partido__EquipoL__76969D2E" Association="Self.FK__Partido__EquipoL__76969D2E">
+            <End Role="TorneoEquipo" EntitySet="TorneoEquipo" />
+            <End Role="Partido" EntitySet="Partido" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Partido__EquipoV__778AC167" Association="Self.FK__Partido__EquipoV__778AC167">
+            <End Role="TorneoEquipo" EntitySet="TorneoEquipo" />
+            <End Role="Partido" EntitySet="Partido" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Partido__TorneoI__75A278F5" Association="Self.FK__Partido__TorneoI__75A278F5">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="Partido" EntitySet="Partido" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Region__PaisID__3E52440B" Association="Self.FK__Region__PaisID__3E52440B">
+            <End Role="Pais" EntitySet="Pais" />
+            <End Role="Region" EntitySet="Region" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TablaPosi__Equip__03F0984C" Association="Self.FK__TablaPosi__Equip__03F0984C">
+            <End Role="Equipo" EntitySet="Equipo" />
+            <End Role="TablaPosiciones" EntitySet="TablaPosiciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TablaPosi__Torne__02FC7413" Association="Self.FK__TablaPosi__Torne__02FC7413">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TablaPosiciones" EntitySet="TablaPosiciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Torneo__CiudadID__48CFD27E" Association="Self.FK__Torneo__CiudadID__48CFD27E">
+            <End Role="Ciudad" EntitySet="Ciudad" />
+            <End Role="Torneo" EntitySet="Torneo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Torneo__Confeder__45F365D3" Association="Self.FK__Torneo__Confeder__45F365D3">
+            <End Role="Confederacion" EntitySet="Confederacion" />
+            <End Role="Torneo" EntitySet="Torneo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Torneo__PaisID__46E78A0C" Association="Self.FK__Torneo__PaisID__46E78A0C">
+            <End Role="Pais" EntitySet="Pais" />
+            <End Role="Torneo" EntitySet="Torneo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Torneo__RegionID__47DBAE45" Association="Self.FK__Torneo__RegionID__47DBAE45">
+            <End Role="Region" EntitySet="Region" />
+            <End Role="Torneo" EntitySet="Torneo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoAsc__Ascen__6B24EA82" Association="Self.FK__TorneoAsc__Ascen__6B24EA82">
+            <End Role="TorneoEquipo" EntitySet="TorneoEquipo" />
+            <End Role="TorneoAscenso" EntitySet="TorneoAscenso" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoAsc__Torne__6C190EBB" Association="Self.FK__TorneoAsc__Torne__6C190EBB">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoAscenso" EntitySet="TorneoAscenso" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoAsc__Torne__6D0D32F4" Association="Self.FK__TorneoAsc__Torne__6D0D32F4">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoAscenso" EntitySet="TorneoAscenso" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoDes__Desce__656C112C" Association="Self.FK__TorneoDes__Desce__656C112C">
+            <End Role="TorneoEquipo" EntitySet="TorneoEquipo" />
+            <End Role="TorneoDescensos" EntitySet="TorneoDescensos" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoDes__Torne__66603565" Association="Self.FK__TorneoDes__Torne__66603565">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoDescensos" EntitySet="TorneoDescensos" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoDes__Torne__6754599E" Association="Self.FK__TorneoDes__Torne__6754599E">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoDescensos" EntitySet="TorneoDescensos" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoEqu__Equip__5AEE82B9" Association="Self.FK__TorneoEqu__Equip__5AEE82B9">
+            <End Role="Equipo" EntitySet="Equipo" />
+            <End Role="TorneoEquipo" EntitySet="TorneoEquipo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoEqu__Torne__59FA5E80" Association="Self.FK__TorneoEqu__Torne__59FA5E80">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoEquipo" EntitySet="TorneoEquipo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoPai__PaisI__4D94879B" Association="Self.FK__TorneoPai__PaisI__4D94879B">
+            <End Role="Pais" EntitySet="Pais" />
+            <End Role="TorneoPais" EntitySet="TorneoPais" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoPai__Torne__4CA06362" Association="Self.FK__TorneoPai__Torne__4CA06362">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoPais" EntitySet="TorneoPais" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoRes__Campe__5FB337D6" Association="Self.FK__TorneoRes__Campe__5FB337D6">
+            <End Role="Equipo" EntitySet="Equipo" />
+            <End Role="TorneoResultados" EntitySet="TorneoResultados" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoRes__Subca__60A75C0F" Association="Self.FK__TorneoRes__Subca__60A75C0F">
+            <End Role="Equipo" EntitySet="Equipo" />
+            <End Role="TorneoResultados" EntitySet="TorneoResultados" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoRes__Torne__5EBF139D" Association="Self.FK__TorneoRes__Torne__5EBF139D">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoResultados" EntitySet="TorneoResultados" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="FutbolDB2Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Ciudad">
+          <Key>
+            <PropertyRef Name="CiudadID" />
+          </Key>
+          <Property Name="CiudadID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="RegionID" Type="Int32" Nullable="false" />
+          <Property Name="EsCapital" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Region" Relationship="Self.FK__Ciudad__RegionID__4222D4EF" FromRole="Ciudad" ToRole="Region" />
+          <NavigationProperty Name="Equipo" Relationship="Self.FK__Equipo__CiudadID__5535A963" FromRole="Ciudad" ToRole="Equipo" />
+          <NavigationProperty Name="Torneo" Relationship="Self.FK__Torneo__CiudadID__48CFD27E" FromRole="Ciudad" ToRole="Torneo" />
+        </EntityType>
+        <EntityType Name="Confederacion">
+          <Key>
+            <PropertyRef Name="ConfederacionID" />
+          </Key>
+          <Property Name="ConfederacionID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Pais" Relationship="Self.FK__Pais__Confederac__3B75D760" FromRole="Confederacion" ToRole="Pais" />
+          <NavigationProperty Name="Torneo" Relationship="Self.FK__Torneo__Confeder__45F365D3" FromRole="Confederacion" ToRole="Torneo" />
+        </EntityType>
+        <EntityType Name="Equipo">
+          <Key>
+            <PropertyRef Name="EquipoID" />
+          </Key>
+          <Property Name="EquipoID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CodigoEquipo" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="RegionID" Type="Int32" />
+          <Property Name="CiudadID" Type="Int32" />
+          <Property Name="AñoFundacion" Type="Int16" />
+          <Property Name="ELO" Type="Double" />
+          <Property Name="TipoEquipo" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Estado" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Ciudad" Relationship="Self.FK__Equipo__CiudadID__5535A963" FromRole="Equipo" ToRole="Ciudad" />
+          <NavigationProperty Name="Region" Relationship="Self.FK__Equipo__RegionID__5441852A" FromRole="Equipo" ToRole="Region" />
+          <NavigationProperty Name="Palmares" Relationship="Self.FK__Palmares__Equipo__70DDC3D8" FromRole="Equipo" ToRole="Palmares" />
+          <NavigationProperty Name="TablaPosiciones" Relationship="Self.FK__TablaPosi__Equip__03F0984C" FromRole="Equipo" ToRole="TablaPosiciones" />
+          <NavigationProperty Name="TorneoEquipo" Relationship="Self.FK__TorneoEqu__Equip__5AEE82B9" FromRole="Equipo" ToRole="TorneoEquipo" />
+          <NavigationProperty Name="TorneoResultados" Relationship="Self.FK__TorneoRes__Campe__5FB337D6" FromRole="Equipo" ToRole="TorneoResultados" />
+          <NavigationProperty Name="TorneoResultados1" Relationship="Self.FK__TorneoRes__Subca__60A75C0F" FromRole="Equipo" ToRole="TorneoResultados" />
+        </EntityType>
+        <EntityType Name="LogELO">
+          <Key>
+            <PropertyRef Name="LogID" />
+          </Key>
+          <Property Name="LogID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PartidoID" Type="Int32" />
+          <Property Name="EquipoID" Type="Int32" />
+          <Property Name="ELOAnterior" Type="Double" />
+          <Property Name="ELONuevo" Type="Double" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Pais">
+          <Key>
+            <PropertyRef Name="PaisID" />
+          </Key>
+          <Property Name="PaisID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CodigoFIFA" Type="String" MaxLength="3" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ConfederacionID" Type="Int32" Nullable="false" />
+          <Property Name="PerteneceFIFA" Type="Boolean" />
+          <NavigationProperty Name="Confederacion" Relationship="Self.FK__Pais__Confederac__3B75D760" FromRole="Pais" ToRole="Confederacion" />
+          <NavigationProperty Name="Region" Relationship="Self.FK__Region__PaisID__3E52440B" FromRole="Pais" ToRole="Region" />
+          <NavigationProperty Name="Torneo" Relationship="Self.FK__Torneo__PaisID__46E78A0C" FromRole="Pais" ToRole="Torneo" />
+          <NavigationProperty Name="TorneoPais" Relationship="Self.FK__TorneoPai__PaisI__4D94879B" FromRole="Pais" ToRole="TorneoPais" />
+        </EntityType>
+        <EntityType Name="Palmares">
+          <Key>
+            <PropertyRef Name="PalmaresID" />
+          </Key>
+          <Property Name="PalmaresID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AñoTitulo" Type="Int16" Nullable="false" />
+          <Property Name="EquipoID" Type="Int32" Nullable="false" />
+          <Property Name="TorneoID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Equipo" Relationship="Self.FK__Palmares__Equipo__70DDC3D8" FromRole="Palmares" ToRole="Equipo" />
+          <NavigationProperty Name="Torneo" Relationship="Self.FK__Palmares__Torneo__71D1E811" FromRole="Palmares" ToRole="Torneo" />
+        </EntityType>
+        <EntityType Name="Partido">
+          <Key>
+            <PropertyRef Name="PartidoID" />
+          </Key>
+          <Property Name="PartidoID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TorneoID" Type="Int32" Nullable="false" />
+          <Property Name="EquipoLocalTorneoEquipoID" Type="Int32" Nullable="false" />
+          <Property Name="EquipoVisitanteTorneoEquipoID" Type="Int32" Nullable="false" />
+          <Property Name="GolesLocal" Type="Int32" />
+          <Property Name="GolesVisitante" Type="Int32" />
+          <Property Name="NroFecha" Type="Int32" Nullable="false" />
+          <Property Name="AñoParticipacion" Type="Int16" Nullable="false" />
+          <Property Name="Fase" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Grupo" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Estado" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="TorneoEquipo" Relationship="Self.FK__Partido__EquipoL__76969D2E" FromRole="Partido" ToRole="TorneoEquipo" />
+          <NavigationProperty Name="TorneoEquipo1" Relationship="Self.FK__Partido__EquipoV__778AC167" FromRole="Partido" ToRole="TorneoEquipo" />
+          <NavigationProperty Name="Torneo" Relationship="Self.FK__Partido__TorneoI__75A278F5" FromRole="Partido" ToRole="Torneo" />
+        </EntityType>
+        <EntityType Name="Region">
+          <Key>
+            <PropertyRef Name="RegionID" />
+          </Key>
+          <Property Name="RegionID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TipoRegion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PaisID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Ciudad" Relationship="Self.FK__Ciudad__RegionID__4222D4EF" FromRole="Region" ToRole="Ciudad" />
+          <NavigationProperty Name="Equipo" Relationship="Self.FK__Equipo__RegionID__5441852A" FromRole="Region" ToRole="Equipo" />
+          <NavigationProperty Name="Pais" Relationship="Self.FK__Region__PaisID__3E52440B" FromRole="Region" ToRole="Pais" />
+          <NavigationProperty Name="Torneo" Relationship="Self.FK__Torneo__RegionID__47DBAE45" FromRole="Region" ToRole="Torneo" />
+        </EntityType>
+        <EntityType Name="TablaPosiciones">
+          <Key>
+            <PropertyRef Name="TablaPosicionesID" />
+          </Key>
+          <Property Name="TablaPosicionesID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TorneoID" Type="Int32" Nullable="false" />
+          <Property Name="AñoParticipacion" Type="Int16" Nullable="false" />
+          <Property Name="EquipoID" Type="Int32" Nullable="false" />
+          <Property Name="PJ" Type="Int32" Nullable="false" />
+          <Property Name="PG" Type="Int32" Nullable="false" />
+          <Property Name="PE" Type="Int32" Nullable="false" />
+          <Property Name="PP" Type="Int32" Nullable="false" />
+          <Property Name="GF" Type="Int32" Nullable="false" />
+          <Property Name="GC" Type="Int32" Nullable="false" />
+          <Property Name="DG" Type="Int32" Nullable="false" />
+          <Property Name="PTS" Type="Int32" Nullable="false" />
+          <Property Name="Fase" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Grupo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Equipo" Relationship="Self.FK__TablaPosi__Equip__03F0984C" FromRole="TablaPosiciones" ToRole="Equipo" />
+          <NavigationProperty Name="Torneo" Relationship="Self.FK__TablaPosi__Torne__02FC7413" FromRole="TablaPosiciones" ToRole="Torneo" />
+        </EntityType>
+        <EntityType Name="Torneo">
+          <Key>
+            <PropertyRef Name="TorneoID" />
+          </Key>
+          <Property Name="TorneoID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TipoTorneo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Categoria" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ConfederacionID" Type="Int32" />
+          <Property Name="PaisID" Type="Int32" />
+          <Property Name="RegionID" Type="Int32" />
+          <Property Name="CiudadID" Type="Int32" />
+          <Property Name="Estado" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Ciudad" Relationship="Self.FK__Torneo__CiudadID__48CFD27E" FromRole="Torneo" ToRole="Ciudad" />
+          <NavigationProperty Name="Confederacion" Relationship="Self.FK__Torneo__Confeder__45F365D3" FromRole="Torneo" ToRole="Confederacion" />
+          <NavigationProperty Name="Pais" Relationship="Self.FK__Torneo__PaisID__46E78A0C" FromRole="Torneo" ToRole="Pais" />
+          <NavigationProperty Name="Palmares" Relationship="Self.FK__Palmares__Torneo__71D1E811" FromRole="Torneo" ToRole="Palmares" />
+          <NavigationProperty Name="Partido" Relationship="Self.FK__Partido__TorneoI__75A278F5" FromRole="Torneo" ToRole="Partido" />
+          <NavigationProperty Name="Region" Relationship="Self.FK__Torneo__RegionID__47DBAE45" FromRole="Torneo" ToRole="Region" />
+          <NavigationProperty Name="TablaPosiciones" Relationship="Self.FK__TablaPosi__Torne__02FC7413" FromRole="Torneo" ToRole="TablaPosiciones" />
+          <NavigationProperty Name="TorneoAscenso" Relationship="Self.FK__TorneoAsc__Torne__6C190EBB" FromRole="Torneo" ToRole="TorneoAscenso" />
+          <NavigationProperty Name="TorneoAscenso1" Relationship="Self.FK__TorneoAsc__Torne__6D0D32F4" FromRole="Torneo" ToRole="TorneoAscenso" />
+          <NavigationProperty Name="TorneoDescensos" Relationship="Self.FK__TorneoDes__Torne__66603565" FromRole="Torneo" ToRole="TorneoDescensos" />
+          <NavigationProperty Name="TorneoDescensos1" Relationship="Self.FK__TorneoDes__Torne__6754599E" FromRole="Torneo" ToRole="TorneoDescensos" />
+          <NavigationProperty Name="TorneoEquipo" Relationship="Self.FK__TorneoEqu__Torne__59FA5E80" FromRole="Torneo" ToRole="TorneoEquipo" />
+          <NavigationProperty Name="TorneoPais" Relationship="Self.FK__TorneoPai__Torne__4CA06362" FromRole="Torneo" ToRole="TorneoPais" />
+          <NavigationProperty Name="TorneoResultados" Relationship="Self.FK__TorneoRes__Torne__5EBF139D" FromRole="Torneo" ToRole="TorneoResultados" />
+        </EntityType>
+        <EntityType Name="TorneoAscenso">
+          <Key>
+            <PropertyRef Name="TorneoAscensoID" />
+          </Key>
+          <Property Name="TorneoAscensoID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AscensoTorneoEquipoID" Type="Int32" Nullable="false" />
+          <Property Name="TorneoOrigenID" Type="Int32" Nullable="false" />
+          <Property Name="TorneoDestinoID" Type="Int32" Nullable="false" />
+          <Property Name="AñoAscenso" Type="Int16" Nullable="false" />
+          <NavigationProperty Name="Torneo" Relationship="Self.FK__TorneoAsc__Torne__6C190EBB" FromRole="TorneoAscenso" ToRole="Torneo" />
+          <NavigationProperty Name="Torneo1" Relationship="Self.FK__TorneoAsc__Torne__6D0D32F4" FromRole="TorneoAscenso" ToRole="Torneo" />
+          <NavigationProperty Name="TorneoEquipo" Relationship="Self.FK__TorneoAsc__Ascen__6B24EA82" FromRole="TorneoAscenso" ToRole="TorneoEquipo" />
+        </EntityType>
+        <EntityType Name="TorneoDescensos">
+          <Key>
+            <PropertyRef Name="TorneoDescensosID" />
+          </Key>
+          <Property Name="TorneoDescensosID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DescensoTorneoEquipoID" Type="Int32" Nullable="false" />
+          <Property Name="TorneoOrigenID" Type="Int32" Nullable="false" />
+          <Property Name="TorneoDestinoID" Type="Int32" Nullable="false" />
+          <Property Name="AñoDescenso" Type="Int16" Nullable="false" />
+          <NavigationProperty Name="Torneo" Relationship="Self.FK__TorneoDes__Torne__66603565" FromRole="TorneoDescensos" ToRole="Torneo" />
+          <NavigationProperty Name="Torneo1" Relationship="Self.FK__TorneoDes__Torne__6754599E" FromRole="TorneoDescensos" ToRole="Torneo" />
+          <NavigationProperty Name="TorneoEquipo" Relationship="Self.FK__TorneoDes__Desce__656C112C" FromRole="TorneoDescensos" ToRole="TorneoEquipo" />
+        </EntityType>
+        <EntityType Name="TorneoEquipo">
+          <Key>
+            <PropertyRef Name="TorneoEquipoID" />
+          </Key>
+          <Property Name="TorneoEquipoID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TorneoID" Type="Int32" Nullable="false" />
+          <Property Name="EquipoID" Type="Int32" Nullable="false" />
+          <Property Name="AñoParticipacion" Type="Int16" Nullable="false" />
+          <Property Name="Fase" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Grupo" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Equipo" Relationship="Self.FK__TorneoEqu__Equip__5AEE82B9" FromRole="TorneoEquipo" ToRole="Equipo" />
+          <NavigationProperty Name="Partido" Relationship="Self.FK__Partido__EquipoL__76969D2E" FromRole="TorneoEquipo" ToRole="Partido" />
+          <NavigationProperty Name="Partido1" Relationship="Self.FK__Partido__EquipoV__778AC167" FromRole="TorneoEquipo" ToRole="Partido" />
+          <NavigationProperty Name="Torneo" Relationship="Self.FK__TorneoEqu__Torne__59FA5E80" FromRole="TorneoEquipo" ToRole="Torneo" />
+          <NavigationProperty Name="TorneoAscenso" Relationship="Self.FK__TorneoAsc__Ascen__6B24EA82" FromRole="TorneoEquipo" ToRole="TorneoAscenso" />
+          <NavigationProperty Name="TorneoDescensos" Relationship="Self.FK__TorneoDes__Desce__656C112C" FromRole="TorneoEquipo" ToRole="TorneoDescensos" />
+        </EntityType>
+        <EntityType Name="TorneoPais">
+          <Key>
+            <PropertyRef Name="TorneoPaisID" />
+          </Key>
+          <Property Name="TorneoPaisID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TorneoID" Type="Int32" Nullable="false" />
+          <Property Name="PaisID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Pais" Relationship="Self.FK__TorneoPai__PaisI__4D94879B" FromRole="TorneoPais" ToRole="Pais" />
+          <NavigationProperty Name="Torneo" Relationship="Self.FK__TorneoPai__Torne__4CA06362" FromRole="TorneoPais" ToRole="Torneo" />
+        </EntityType>
+        <EntityType Name="TorneoResultados">
+          <Key>
+            <PropertyRef Name="TorneoResultadosID" />
+          </Key>
+          <Property Name="TorneoResultadosID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TorneoID" Type="Int32" Nullable="false" />
+          <Property Name="AñoTorneo" Type="Int16" Nullable="false" />
+          <Property Name="CampeonEquipoID" Type="Int32" />
+          <Property Name="SubcampeonEquipoID" Type="Int32" />
+          <Property Name="Observaciones" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Era" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Equipo" Relationship="Self.FK__TorneoRes__Campe__5FB337D6" FromRole="TorneoResultados" ToRole="Equipo" />
+          <NavigationProperty Name="Equipo1" Relationship="Self.FK__TorneoRes__Subca__60A75C0F" FromRole="TorneoResultados" ToRole="Equipo" />
+          <NavigationProperty Name="Torneo" Relationship="Self.FK__TorneoRes__Torne__5EBF139D" FromRole="TorneoResultados" ToRole="Torneo" />
+        </EntityType>
+        <Association Name="FK__Ciudad__RegionID__4222D4EF">
+          <End Role="Region" Type="Self.Region" Multiplicity="1" />
+          <End Role="Ciudad" Type="Self.Ciudad" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Region">
+              <PropertyRef Name="RegionID" />
+            </Principal>
+            <Dependent Role="Ciudad">
+              <PropertyRef Name="RegionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Equipo__CiudadID__5535A963">
+          <End Role="Ciudad" Type="Self.Ciudad" Multiplicity="0..1" />
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ciudad">
+              <PropertyRef Name="CiudadID" />
+            </Principal>
+            <Dependent Role="Equipo">
+              <PropertyRef Name="CiudadID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Torneo__CiudadID__48CFD27E">
+          <End Role="Ciudad" Type="Self.Ciudad" Multiplicity="0..1" />
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ciudad">
+              <PropertyRef Name="CiudadID" />
+            </Principal>
+            <Dependent Role="Torneo">
+              <PropertyRef Name="CiudadID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Pais__Confederac__3B75D760">
+          <End Role="Confederacion" Type="Self.Confederacion" Multiplicity="1" />
+          <End Role="Pais" Type="Self.Pais" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Confederacion">
+              <PropertyRef Name="ConfederacionID" />
+            </Principal>
+            <Dependent Role="Pais">
+              <PropertyRef Name="ConfederacionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Torneo__Confeder__45F365D3">
+          <End Role="Confederacion" Type="Self.Confederacion" Multiplicity="0..1" />
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Confederacion">
+              <PropertyRef Name="ConfederacionID" />
+            </Principal>
+            <Dependent Role="Torneo">
+              <PropertyRef Name="ConfederacionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Equipo__RegionID__5441852A">
+          <End Role="Region" Type="Self.Region" Multiplicity="0..1" />
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Region">
+              <PropertyRef Name="RegionID" />
+            </Principal>
+            <Dependent Role="Equipo">
+              <PropertyRef Name="RegionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Palmares__Equipo__70DDC3D8">
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="1" />
+          <End Role="Palmares" Type="Self.Palmares" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipo">
+              <PropertyRef Name="EquipoID" />
+            </Principal>
+            <Dependent Role="Palmares">
+              <PropertyRef Name="EquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TablaPosi__Equip__03F0984C">
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="1" />
+          <End Role="TablaPosiciones" Type="Self.TablaPosiciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipo">
+              <PropertyRef Name="EquipoID" />
+            </Principal>
+            <Dependent Role="TablaPosiciones">
+              <PropertyRef Name="EquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoEqu__Equip__5AEE82B9">
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="1" />
+          <End Role="TorneoEquipo" Type="Self.TorneoEquipo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipo">
+              <PropertyRef Name="EquipoID" />
+            </Principal>
+            <Dependent Role="TorneoEquipo">
+              <PropertyRef Name="EquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoRes__Campe__5FB337D6">
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="0..1" />
+          <End Role="TorneoResultados" Type="Self.TorneoResultados" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipo">
+              <PropertyRef Name="EquipoID" />
+            </Principal>
+            <Dependent Role="TorneoResultados">
+              <PropertyRef Name="CampeonEquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoRes__Subca__60A75C0F">
+          <End Role="Equipo" Type="Self.Equipo" Multiplicity="0..1" />
+          <End Role="TorneoResultados" Type="Self.TorneoResultados" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipo">
+              <PropertyRef Name="EquipoID" />
+            </Principal>
+            <Dependent Role="TorneoResultados">
+              <PropertyRef Name="SubcampeonEquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Region__PaisID__3E52440B">
+          <End Role="Pais" Type="Self.Pais" Multiplicity="1" />
+          <End Role="Region" Type="Self.Region" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pais">
+              <PropertyRef Name="PaisID" />
+            </Principal>
+            <Dependent Role="Region">
+              <PropertyRef Name="PaisID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Torneo__PaisID__46E78A0C">
+          <End Role="Pais" Type="Self.Pais" Multiplicity="0..1" />
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pais">
+              <PropertyRef Name="PaisID" />
+            </Principal>
+            <Dependent Role="Torneo">
+              <PropertyRef Name="PaisID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoPai__PaisI__4D94879B">
+          <End Role="Pais" Type="Self.Pais" Multiplicity="1" />
+          <End Role="TorneoPais" Type="Self.TorneoPais" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pais">
+              <PropertyRef Name="PaisID" />
+            </Principal>
+            <Dependent Role="TorneoPais">
+              <PropertyRef Name="PaisID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Palmares__Torneo__71D1E811">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="Palmares" Type="Self.Palmares" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="Palmares">
+              <PropertyRef Name="TorneoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Partido__EquipoL__76969D2E">
+          <End Role="TorneoEquipo" Type="Self.TorneoEquipo" Multiplicity="1" />
+          <End Role="Partido" Type="Self.Partido" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TorneoEquipo">
+              <PropertyRef Name="TorneoEquipoID" />
+            </Principal>
+            <Dependent Role="Partido">
+              <PropertyRef Name="EquipoLocalTorneoEquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Partido__EquipoV__778AC167">
+          <End Role="TorneoEquipo" Type="Self.TorneoEquipo" Multiplicity="1" />
+          <End Role="Partido" Type="Self.Partido" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TorneoEquipo">
+              <PropertyRef Name="TorneoEquipoID" />
+            </Principal>
+            <Dependent Role="Partido">
+              <PropertyRef Name="EquipoVisitanteTorneoEquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Partido__TorneoI__75A278F5">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="Partido" Type="Self.Partido" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="Partido">
+              <PropertyRef Name="TorneoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Torneo__RegionID__47DBAE45">
+          <End Role="Region" Type="Self.Region" Multiplicity="0..1" />
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Region">
+              <PropertyRef Name="RegionID" />
+            </Principal>
+            <Dependent Role="Torneo">
+              <PropertyRef Name="RegionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TablaPosi__Torne__02FC7413">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TablaPosiciones" Type="Self.TablaPosiciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TablaPosiciones">
+              <PropertyRef Name="TorneoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoAsc__Torne__6C190EBB">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoAscenso" Type="Self.TorneoAscenso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoAscenso">
+              <PropertyRef Name="TorneoOrigenID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoAsc__Torne__6D0D32F4">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoAscenso" Type="Self.TorneoAscenso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoAscenso">
+              <PropertyRef Name="TorneoDestinoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoDes__Torne__66603565">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoDescensos" Type="Self.TorneoDescensos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoDescensos">
+              <PropertyRef Name="TorneoOrigenID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoDes__Torne__6754599E">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoDescensos" Type="Self.TorneoDescensos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoDescensos">
+              <PropertyRef Name="TorneoDestinoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoEqu__Torne__59FA5E80">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoEquipo" Type="Self.TorneoEquipo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoEquipo">
+              <PropertyRef Name="TorneoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoPai__Torne__4CA06362">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoPais" Type="Self.TorneoPais" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoPais">
+              <PropertyRef Name="TorneoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoRes__Torne__5EBF139D">
+          <End Role="Torneo" Type="Self.Torneo" Multiplicity="1" />
+          <End Role="TorneoResultados" Type="Self.TorneoResultados" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneo">
+              <PropertyRef Name="TorneoID" />
+            </Principal>
+            <Dependent Role="TorneoResultados">
+              <PropertyRef Name="TorneoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoAsc__Ascen__6B24EA82">
+          <End Role="TorneoEquipo" Type="Self.TorneoEquipo" Multiplicity="1" />
+          <End Role="TorneoAscenso" Type="Self.TorneoAscenso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TorneoEquipo">
+              <PropertyRef Name="TorneoEquipoID" />
+            </Principal>
+            <Dependent Role="TorneoAscenso">
+              <PropertyRef Name="AscensoTorneoEquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TorneoDes__Desce__656C112C">
+          <End Role="TorneoEquipo" Type="Self.TorneoEquipo" Multiplicity="1" />
+          <End Role="TorneoDescensos" Type="Self.TorneoDescensos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TorneoEquipo">
+              <PropertyRef Name="TorneoEquipoID" />
+            </Principal>
+            <Dependent Role="TorneoDescensos">
+              <PropertyRef Name="DescensoTorneoEquipoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="FutbolDB2Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Ciudad" EntityType="Self.Ciudad" />
+          <EntitySet Name="Confederacion" EntityType="Self.Confederacion" />
+          <EntitySet Name="Equipo" EntityType="Self.Equipo" />
+          <EntitySet Name="LogELO" EntityType="Self.LogELO" />
+          <EntitySet Name="Pais" EntityType="Self.Pais" />
+          <EntitySet Name="Palmares" EntityType="Self.Palmares" />
+          <EntitySet Name="Partido" EntityType="Self.Partido" />
+          <EntitySet Name="Region" EntityType="Self.Region" />
+          <EntitySet Name="TablaPosiciones" EntityType="Self.TablaPosiciones" />
+          <EntitySet Name="Torneo" EntityType="Self.Torneo" />
+          <EntitySet Name="TorneoAscenso" EntityType="Self.TorneoAscenso" />
+          <EntitySet Name="TorneoDescensos" EntityType="Self.TorneoDescensos" />
+          <EntitySet Name="TorneoEquipo" EntityType="Self.TorneoEquipo" />
+          <EntitySet Name="TorneoPais" EntityType="Self.TorneoPais" />
+          <EntitySet Name="TorneoResultados" EntityType="Self.TorneoResultados" />
+          <AssociationSet Name="FK__Ciudad__RegionID__4222D4EF" Association="Self.FK__Ciudad__RegionID__4222D4EF">
+            <End Role="Region" EntitySet="Region" />
+            <End Role="Ciudad" EntitySet="Ciudad" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Equipo__CiudadID__5535A963" Association="Self.FK__Equipo__CiudadID__5535A963">
+            <End Role="Ciudad" EntitySet="Ciudad" />
+            <End Role="Equipo" EntitySet="Equipo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Torneo__CiudadID__48CFD27E" Association="Self.FK__Torneo__CiudadID__48CFD27E">
+            <End Role="Ciudad" EntitySet="Ciudad" />
+            <End Role="Torneo" EntitySet="Torneo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Pais__Confederac__3B75D760" Association="Self.FK__Pais__Confederac__3B75D760">
+            <End Role="Confederacion" EntitySet="Confederacion" />
+            <End Role="Pais" EntitySet="Pais" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Torneo__Confeder__45F365D3" Association="Self.FK__Torneo__Confeder__45F365D3">
+            <End Role="Confederacion" EntitySet="Confederacion" />
+            <End Role="Torneo" EntitySet="Torneo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Equipo__RegionID__5441852A" Association="Self.FK__Equipo__RegionID__5441852A">
+            <End Role="Region" EntitySet="Region" />
+            <End Role="Equipo" EntitySet="Equipo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Palmares__Equipo__70DDC3D8" Association="Self.FK__Palmares__Equipo__70DDC3D8">
+            <End Role="Equipo" EntitySet="Equipo" />
+            <End Role="Palmares" EntitySet="Palmares" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TablaPosi__Equip__03F0984C" Association="Self.FK__TablaPosi__Equip__03F0984C">
+            <End Role="Equipo" EntitySet="Equipo" />
+            <End Role="TablaPosiciones" EntitySet="TablaPosiciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoEqu__Equip__5AEE82B9" Association="Self.FK__TorneoEqu__Equip__5AEE82B9">
+            <End Role="Equipo" EntitySet="Equipo" />
+            <End Role="TorneoEquipo" EntitySet="TorneoEquipo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoRes__Campe__5FB337D6" Association="Self.FK__TorneoRes__Campe__5FB337D6">
+            <End Role="Equipo" EntitySet="Equipo" />
+            <End Role="TorneoResultados" EntitySet="TorneoResultados" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoRes__Subca__60A75C0F" Association="Self.FK__TorneoRes__Subca__60A75C0F">
+            <End Role="Equipo" EntitySet="Equipo" />
+            <End Role="TorneoResultados" EntitySet="TorneoResultados" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Region__PaisID__3E52440B" Association="Self.FK__Region__PaisID__3E52440B">
+            <End Role="Pais" EntitySet="Pais" />
+            <End Role="Region" EntitySet="Region" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Torneo__PaisID__46E78A0C" Association="Self.FK__Torneo__PaisID__46E78A0C">
+            <End Role="Pais" EntitySet="Pais" />
+            <End Role="Torneo" EntitySet="Torneo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoPai__PaisI__4D94879B" Association="Self.FK__TorneoPai__PaisI__4D94879B">
+            <End Role="Pais" EntitySet="Pais" />
+            <End Role="TorneoPais" EntitySet="TorneoPais" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Palmares__Torneo__71D1E811" Association="Self.FK__Palmares__Torneo__71D1E811">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="Palmares" EntitySet="Palmares" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Partido__EquipoL__76969D2E" Association="Self.FK__Partido__EquipoL__76969D2E">
+            <End Role="TorneoEquipo" EntitySet="TorneoEquipo" />
+            <End Role="Partido" EntitySet="Partido" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Partido__EquipoV__778AC167" Association="Self.FK__Partido__EquipoV__778AC167">
+            <End Role="TorneoEquipo" EntitySet="TorneoEquipo" />
+            <End Role="Partido" EntitySet="Partido" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Partido__TorneoI__75A278F5" Association="Self.FK__Partido__TorneoI__75A278F5">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="Partido" EntitySet="Partido" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Torneo__RegionID__47DBAE45" Association="Self.FK__Torneo__RegionID__47DBAE45">
+            <End Role="Region" EntitySet="Region" />
+            <End Role="Torneo" EntitySet="Torneo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TablaPosi__Torne__02FC7413" Association="Self.FK__TablaPosi__Torne__02FC7413">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TablaPosiciones" EntitySet="TablaPosiciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoAsc__Torne__6C190EBB" Association="Self.FK__TorneoAsc__Torne__6C190EBB">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoAscenso" EntitySet="TorneoAscenso" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoAsc__Torne__6D0D32F4" Association="Self.FK__TorneoAsc__Torne__6D0D32F4">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoAscenso" EntitySet="TorneoAscenso" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoDes__Torne__66603565" Association="Self.FK__TorneoDes__Torne__66603565">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoDescensos" EntitySet="TorneoDescensos" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoDes__Torne__6754599E" Association="Self.FK__TorneoDes__Torne__6754599E">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoDescensos" EntitySet="TorneoDescensos" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoEqu__Torne__59FA5E80" Association="Self.FK__TorneoEqu__Torne__59FA5E80">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoEquipo" EntitySet="TorneoEquipo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoPai__Torne__4CA06362" Association="Self.FK__TorneoPai__Torne__4CA06362">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoPais" EntitySet="TorneoPais" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoRes__Torne__5EBF139D" Association="Self.FK__TorneoRes__Torne__5EBF139D">
+            <End Role="Torneo" EntitySet="Torneo" />
+            <End Role="TorneoResultados" EntitySet="TorneoResultados" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoAsc__Ascen__6B24EA82" Association="Self.FK__TorneoAsc__Ascen__6B24EA82">
+            <End Role="TorneoEquipo" EntitySet="TorneoEquipo" />
+            <End Role="TorneoAscenso" EntitySet="TorneoAscenso" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TorneoDes__Desce__656C112C" Association="Self.FK__TorneoDes__Desce__656C112C">
+            <End Role="TorneoEquipo" EntitySet="TorneoEquipo" />
+            <End Role="TorneoDescensos" EntitySet="TorneoDescensos" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="FutbolDB2ModelStoreContainer" CdmEntityContainer="FutbolDB2Entities">
+          <EntitySetMapping Name="Ciudad">
+            <EntityTypeMapping TypeName="FutbolDB2Model.Ciudad">
+              <MappingFragment StoreEntitySet="Ciudad">
+                <ScalarProperty Name="CiudadID" ColumnName="CiudadID" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="RegionID" ColumnName="RegionID" />
+                <ScalarProperty Name="EsCapital" ColumnName="EsCapital" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Confederacion">
+            <EntityTypeMapping TypeName="FutbolDB2Model.Confederacion">
+              <MappingFragment StoreEntitySet="Confederacion">
+                <ScalarProperty Name="ConfederacionID" ColumnName="ConfederacionID" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Equipo">
+            <EntityTypeMapping TypeName="FutbolDB2Model.Equipo">
+              <MappingFragment StoreEntitySet="Equipo">
+                <ScalarProperty Name="EquipoID" ColumnName="EquipoID" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="CodigoEquipo" ColumnName="CodigoEquipo" />
+                <ScalarProperty Name="RegionID" ColumnName="RegionID" />
+                <ScalarProperty Name="CiudadID" ColumnName="CiudadID" />
+                <ScalarProperty Name="AñoFundacion" ColumnName="AñoFundacion" />
+                <ScalarProperty Name="ELO" ColumnName="ELO" />
+                <ScalarProperty Name="TipoEquipo" ColumnName="TipoEquipo" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LogELO">
+            <EntityTypeMapping TypeName="FutbolDB2Model.LogELO">
+              <MappingFragment StoreEntitySet="LogELO">
+                <ScalarProperty Name="LogID" ColumnName="LogID" />
+                <ScalarProperty Name="PartidoID" ColumnName="PartidoID" />
+                <ScalarProperty Name="EquipoID" ColumnName="EquipoID" />
+                <ScalarProperty Name="ELOAnterior" ColumnName="ELOAnterior" />
+                <ScalarProperty Name="ELONuevo" ColumnName="ELONuevo" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Pais">
+            <EntityTypeMapping TypeName="FutbolDB2Model.Pais">
+              <MappingFragment StoreEntitySet="Pais">
+                <ScalarProperty Name="PaisID" ColumnName="PaisID" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="CodigoFIFA" ColumnName="CodigoFIFA" />
+                <ScalarProperty Name="ConfederacionID" ColumnName="ConfederacionID" />
+                <ScalarProperty Name="PerteneceFIFA" ColumnName="PerteneceFIFA" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Palmares">
+            <EntityTypeMapping TypeName="FutbolDB2Model.Palmares">
+              <MappingFragment StoreEntitySet="Palmares">
+                <ScalarProperty Name="PalmaresID" ColumnName="PalmaresID" />
+                <ScalarProperty Name="AñoTitulo" ColumnName="AñoTitulo" />
+                <ScalarProperty Name="EquipoID" ColumnName="EquipoID" />
+                <ScalarProperty Name="TorneoID" ColumnName="TorneoID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Partido">
+            <EntityTypeMapping TypeName="FutbolDB2Model.Partido">
+              <MappingFragment StoreEntitySet="Partido">
+                <ScalarProperty Name="PartidoID" ColumnName="PartidoID" />
+                <ScalarProperty Name="TorneoID" ColumnName="TorneoID" />
+                <ScalarProperty Name="EquipoLocalTorneoEquipoID" ColumnName="EquipoLocalTorneoEquipoID" />
+                <ScalarProperty Name="EquipoVisitanteTorneoEquipoID" ColumnName="EquipoVisitanteTorneoEquipoID" />
+                <ScalarProperty Name="GolesLocal" ColumnName="GolesLocal" />
+                <ScalarProperty Name="GolesVisitante" ColumnName="GolesVisitante" />
+                <ScalarProperty Name="NroFecha" ColumnName="NroFecha" />
+                <ScalarProperty Name="AñoParticipacion" ColumnName="AñoParticipacion" />
+                <ScalarProperty Name="Fase" ColumnName="Fase" />
+                <ScalarProperty Name="Grupo" ColumnName="Grupo" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Region">
+            <EntityTypeMapping TypeName="FutbolDB2Model.Region">
+              <MappingFragment StoreEntitySet="Region">
+                <ScalarProperty Name="RegionID" ColumnName="RegionID" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="TipoRegion" ColumnName="TipoRegion" />
+                <ScalarProperty Name="PaisID" ColumnName="PaisID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TablaPosiciones">
+            <EntityTypeMapping TypeName="FutbolDB2Model.TablaPosiciones">
+              <MappingFragment StoreEntitySet="TablaPosiciones">
+                <ScalarProperty Name="TablaPosicionesID" ColumnName="TablaPosicionesID" />
+                <ScalarProperty Name="TorneoID" ColumnName="TorneoID" />
+                <ScalarProperty Name="AñoParticipacion" ColumnName="AñoParticipacion" />
+                <ScalarProperty Name="EquipoID" ColumnName="EquipoID" />
+                <ScalarProperty Name="PJ" ColumnName="PJ" />
+                <ScalarProperty Name="PG" ColumnName="PG" />
+                <ScalarProperty Name="PE" ColumnName="PE" />
+                <ScalarProperty Name="PP" ColumnName="PP" />
+                <ScalarProperty Name="GF" ColumnName="GF" />
+                <ScalarProperty Name="GC" ColumnName="GC" />
+                <ScalarProperty Name="DG" ColumnName="DG" />
+                <ScalarProperty Name="PTS" ColumnName="PTS" />
+                <ScalarProperty Name="Fase" ColumnName="Fase" />
+                <ScalarProperty Name="Grupo" ColumnName="Grupo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Torneo">
+            <EntityTypeMapping TypeName="FutbolDB2Model.Torneo">
+              <MappingFragment StoreEntitySet="Torneo">
+                <ScalarProperty Name="TorneoID" ColumnName="TorneoID" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="TipoTorneo" ColumnName="TipoTorneo" />
+                <ScalarProperty Name="Categoria" ColumnName="Categoria" />
+                <ScalarProperty Name="ConfederacionID" ColumnName="ConfederacionID" />
+                <ScalarProperty Name="PaisID" ColumnName="PaisID" />
+                <ScalarProperty Name="RegionID" ColumnName="RegionID" />
+                <ScalarProperty Name="CiudadID" ColumnName="CiudadID" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TorneoAscenso">
+            <EntityTypeMapping TypeName="FutbolDB2Model.TorneoAscenso">
+              <MappingFragment StoreEntitySet="TorneoAscenso">
+                <ScalarProperty Name="TorneoAscensoID" ColumnName="TorneoAscensoID" />
+                <ScalarProperty Name="AscensoTorneoEquipoID" ColumnName="AscensoTorneoEquipoID" />
+                <ScalarProperty Name="TorneoOrigenID" ColumnName="TorneoOrigenID" />
+                <ScalarProperty Name="TorneoDestinoID" ColumnName="TorneoDestinoID" />
+                <ScalarProperty Name="AñoAscenso" ColumnName="AñoAscenso" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TorneoDescensos">
+            <EntityTypeMapping TypeName="FutbolDB2Model.TorneoDescensos">
+              <MappingFragment StoreEntitySet="TorneoDescensos">
+                <ScalarProperty Name="TorneoDescensosID" ColumnName="TorneoDescensosID" />
+                <ScalarProperty Name="DescensoTorneoEquipoID" ColumnName="DescensoTorneoEquipoID" />
+                <ScalarProperty Name="TorneoOrigenID" ColumnName="TorneoOrigenID" />
+                <ScalarProperty Name="TorneoDestinoID" ColumnName="TorneoDestinoID" />
+                <ScalarProperty Name="AñoDescenso" ColumnName="AñoDescenso" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TorneoEquipo">
+            <EntityTypeMapping TypeName="FutbolDB2Model.TorneoEquipo">
+              <MappingFragment StoreEntitySet="TorneoEquipo">
+                <ScalarProperty Name="TorneoEquipoID" ColumnName="TorneoEquipoID" />
+                <ScalarProperty Name="TorneoID" ColumnName="TorneoID" />
+                <ScalarProperty Name="EquipoID" ColumnName="EquipoID" />
+                <ScalarProperty Name="AñoParticipacion" ColumnName="AñoParticipacion" />
+                <ScalarProperty Name="Fase" ColumnName="Fase" />
+                <ScalarProperty Name="Grupo" ColumnName="Grupo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TorneoPais">
+            <EntityTypeMapping TypeName="FutbolDB2Model.TorneoPais">
+              <MappingFragment StoreEntitySet="TorneoPais">
+                <ScalarProperty Name="TorneoPaisID" ColumnName="TorneoPaisID" />
+                <ScalarProperty Name="TorneoID" ColumnName="TorneoID" />
+                <ScalarProperty Name="PaisID" ColumnName="PaisID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TorneoResultados">
+            <EntityTypeMapping TypeName="FutbolDB2Model.TorneoResultados">
+              <MappingFragment StoreEntitySet="TorneoResultados">
+                <ScalarProperty Name="TorneoResultadosID" ColumnName="TorneoResultadosID" />
+                <ScalarProperty Name="TorneoID" ColumnName="TorneoID" />
+                <ScalarProperty Name="AñoTorneo" ColumnName="AñoTorneo" />
+                <ScalarProperty Name="CampeonEquipoID" ColumnName="CampeonEquipoID" />
+                <ScalarProperty Name="SubcampeonEquipoID" ColumnName="SubcampeonEquipoID" />
+                <ScalarProperty Name="Observaciones" ColumnName="Observaciones" />
+                <ScalarProperty Name="Era" ColumnName="Era" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
