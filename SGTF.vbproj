@@ -157,6 +157,7 @@
     <Compile Include="Controllers\ConfederacionController.vb" />
     <Compile Include="Controllers\EquiposController.vb" />
     <Compile Include="Controllers\PaisController.vb" />
+    <Compile Include="Controllers\PalmaresController.vb" />
     <Compile Include="Controllers\PartidoController.vb" />
     <Compile Include="Controllers\RegionController.vb" />
     <Compile Include="Controllers\TorneosController.vb" />
@@ -329,6 +330,7 @@
     <Content Include="Scripts\js\dashboard.js" />
     <Content Include="Scripts\js\equipo.js" />
     <Content Include="Scripts\js\pais.js" />
+    <Content Include="Scripts\js\palmares.js" />
     <Content Include="Scripts\js\Partido.js" />
     <Content Include="Scripts\js\region.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
@@ -341,6 +343,7 @@
     <Content Include="Views\Paises\Index.vbhtml" />
     <Content Include="Views\Region\Index.vbhtml" />
     <Content Include="Views\Ciudad\Index.vbhtml" />
+    <Content Include="Views\Palmares\Index.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
