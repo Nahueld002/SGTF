@@ -34,6 +34,7 @@ End Code
             <option value="">Todos los Estados</option>
             <option value="Activo">Activo</option>
             <option value="Extinto">Extinto</option>
+            <option value="Suspendido">Suspendido</option>
         </select>
     </div>
 </div>
@@ -46,6 +47,9 @@ End Code
                 <th scope="col" class="px-6 py-3">Tipo de Torneo</th>
                 <th scope="col" class="px-6 py-3">Categoría</th>
                 <th scope="col" class="px-6 py-3">Estado</th>
+                <th scope="col" class="px-6 py-3">Confederación</th>
+                <th scope="col" class="px-6 py-3">País</th>
+                <th scope="col" class="px-6 py-3">Región</th>
                 <th scope="col" class="px-6 py-3">Ciudad</th>
                 <th scope="col" class="px-6 py-3">Acciones</th>
             </tr>
@@ -95,7 +99,7 @@ End Code
                         <option value="">Seleccionar...</option>
                         <option value="Activo">Activo</option>
                         <option value="Extinto">Extinto</option>
-                        <option value="Activo">Suspendido</option>
+                        <option value="Suspendido">Suspendido</option>
                     </select>
                 </div>
 
@@ -201,83 +205,25 @@ End Code
 </style>
 
 @section Scripts
-    <script src="/scripts/jquery-3.7.1.min.js"></script>
+    <script src="~/scripts/jquery-3.7.1.min.js"></script>
     <script src="~/scripts/js/Torneo.js"></script>
-
     <script>
-        // Function to load tournaments into the table
-        function Listar() {
-            $.ajax({
-                url: '@Url.Action("ListarTorneos", "Torneo")',
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    var tbody = $('#tblTorneosBody');
-                    tbody.empty(); // Clear existing rows
+        // These global functions were likely meant for the HTML,
+        // but it's better to keep the main Listar/filter logic in Torneo.js.
+        // If AbrirModal or CerrarModal are *only* called from HTML attributes,
+        // they need to be globally accessible, so we make them window properties.
 
-                    if (data && data.length > 0) {
-                        $.each(data, function (i, item) {
-var row = 
-    <tr class="${i % 2 === 0 ? 'table-row-even' : 'table-row-odd'} border-b border-gray-700">
-        <td class="px-6 py-4 font-medium text-white">${item.Nombre}</td>
-        <td class="px-6 py-4">${item.TipoTorneo}</td>
-        <td class="px-6 py-4">${item.Categoria}</td>
-        <td class="px-6 py-4">${item.Estado}</td>
-        <td class="px-6 py-4">${item.Ciudad}</td>
-        <td class="px-6 py-4 text-center">
-            <div class="flex items-center justify-center gap-2">
-                <button class="p-2 rounded-md hover:bg-gray-600" title="Ver Tabla de Posiciones"
-                        onclick="VerTablaPosiciones(${item.TorneoID}, '${item.Nombre.replace(/'/g, "\\'")}')">
-                    <i data-lucide="award" class="w-4 h-4 text-purple-400"></i>
-                </button>
-
-                <button class="p-2 rounded-md hover:bg-gray-600" title="Editar" onclick="AbrirModal(${item.TorneoID})">
-                    <i data-lucide="edit" class="w-4 h-4 text-yellow-400"></i>
-                </button>
-
-                <button class="p-2 rounded-md hover:bg-gray-600" title="Eliminar" onclick="ConfirmarEliminar(${item.TorneoID})">
-                    <i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i>
-                </button>
-
-                <button class="p-2 rounded-md hover:bg-gray-600" title="Asignar Equipos" onclick="alert('Asignar equipos no implementado')">
-                    <i data-lucide="users" class="w-4 h-4 text-green-400"></i>
-                </button>
-                <button class="p-2 rounded-md hover:bg-gray-600" title="Generar Fixture" onclick="alert('Generar fixture no implementado')">
-                    <i data-lucide="calendar-plus" class="w-4 h-4 text-purple-400"></i>
-                </button>
-            </div>
-        </td>
-    </tr >
-    ;
-                            tbody.append(row);
-                        });
-                    } else {
-                        tbody.append('<tr><td colspan="6" class="px-6 py-4 text-center text-gray-400">No se encontraron torneos.</td></tr>');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al cargar torneos:", error);
-                    $('#tblTorneosBody').empty().append('<tr><td colspan="6" class="px-6 py-4 text-center text-red-400">Error al cargar los torneos.</td></tr>');
-                }
-            });
-        }
-
-        $(document).ready(function () {
-            Listar(); // Call Listar on page load to populate the table
-            CargarComboboxes(); // Assuming this function is defined in Torneo.js to load city, country, etc.
-        });
-
-        // Ensure AbrirModal and CerrarModal (for the tournament form modal) have transitions
-        window.AbrirModal = function (torneoID = 0) { // Added default parameter for new creation
-            // Reset form and title for new tournament
-            $('#formTorneo')[0].reset();
-            $('#txtTorneoID').val(0);
-            $('#modal-title').text('Nuevo Torneo');
+        window.AbrirModal = function (torneoID = 0) {
+            // Reiniciar formulario y título para nuevo torneo
+            Limpiar(); // Llamar a la función Limpiar para resetear el formulario
+            cargarComboBoxesJerarquicos(); // Recargar los comboboxes jerárquicos
 
             if (torneoID > 0) {
-                // If editing, populate form with existing data
-                Recuperar(torneoID); // This function should populate the form fields
+                // Si está editando, poblar el formulario con datos existentes
+                Recuperar(torneoID); // Esta función debería poblar los campos del formulario
                 $('#modal-title').text('Editar Torneo');
+            } else {
+                $('#modal-title').text('Nuevo Torneo');
             }
 
             $('#modalTorneo').removeClass('hidden');
@@ -288,14 +234,13 @@ var row =
             $('#modalTorneoContent').removeClass('opacity-100 scale-100').addClass('opacity-0 scale-95');
             setTimeout(() => {
                 $('#modalTorneo').addClass('hidden');
-            }, 300); // Allow time for transition
+            }, 300); // Permite tiempo para la transición
         };
-        function VerTablaPosiciones(torneoID, nombre) {
+
+        // Función para redirigir a la tabla de posiciones
+        window.VerTablaPosiciones = function (torneoID, nombre) {
             const encodedNombre = encodeURIComponent(nombre);
             window.location.href = `/Torneo/TablaPosiciones?torneoID=${torneoID}&torneoNombre=${encodedNombre}`;
-        }
-
-
-        // You'll need to ensure your Torneo.js file has the implementation for Guardar(), Recuperar(), Eliminar(), and CargarComboboxes()
+        };
     </script>
-    End Section
+End Section

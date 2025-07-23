@@ -4,11 +4,60 @@ End Code
 
 <div class="flex justify-between items-center mb-6">
     <h2 class="text-3xl font-bold text-white">Equipos</h2>
-    <button onclick="abrirModalNuevo()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors">
+    <button id="btnAbrirModalNuevoEquipo" onclick="abrirModalNuevo()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors">
         <i data-lucide="plus-circle" class="w-5 h-5"></i> Crear Equipo
     </button>
 </div>
 
+<div class="card p-4 rounded-lg mb-6">
+    <h3 class="text-xl font-semibold text-white mb-4">Filtros de Búsqueda</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+            <label for="filter-nombreEquipo" class="block text-sm font-medium text-gray-300 mb-2">Nombre del Equipo</label>
+            <input type="text" id="filter-nombreEquipo" placeholder="Buscar por nombre..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500" />
+        </div>
+        <div>
+            <label for="filter-codigoEquipo" class="block text-sm font-medium text-gray-300 mb-2">Código de Equipo</label>
+            <input type="text" id="filter-codigoEquipo" placeholder="Buscar por código..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500" />
+        </div>
+        <div>
+            <label for="filter-regionEquipo" class="block text-sm font-medium text-gray-300 mb-2">Región</label>
+            <select id="filter-regionEquipo" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
+                <option value="">Todas las Regiones</option>
+            </select>
+        </div>
+        <div>
+            <label for="filter-ciudadEquipo" class="block text-sm font-medium text-gray-300 mb-2">Ciudad</label>
+            <select id="filter-ciudadEquipo" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
+                <option value="">Todas las Ciudades</option>
+            </select>
+        </div>
+        <div>
+            <label for="filter-tipoEquipo" class="block text-sm font-medium text-gray-300 mb-2">Tipo de Equipo</label>
+            <select id="filter-tipoEquipo" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
+                <option value="">Todos los Tipos</option>
+                <option value="Club">Club</option>
+                <option value="Seleccion Nacional">Selección Nacional</option>
+                <option value="Seleccion Regional">Selección Regional</option>
+                <option value="Universitario">Universitario</option>
+                <option value="Amateur">Amateur</option>
+                <option value="Otro">Otro</option>
+            </select>
+        </div>
+        <div>
+            <label for="filter-estadoEquipo" class="block text-sm font-medium text-gray-300 mb-2">Estado</label>
+            <select id="filter-estadoEquipo" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
+                <option value="">Todos los Estados</option>
+                <option value="Activo">Activo</option>
+                <option value="Desaparecido">Desaparecido</option>
+                <option value="Desafiliado">Desafiliado</option>
+                <option value="Inactivo">Inactivo</option>
+                <option value="Suspendido">Suspendido</option>
+                <option value="Fusionado">Fusionado</option>
+            </select>
+        </div>
+    </div>
+</div>
 <div class="card p-4 rounded-lg overflow-x-auto">
     <table id="tablaEquipos" class="w-full text-left">
         <thead class="table-header">

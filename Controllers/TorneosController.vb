@@ -20,7 +20,10 @@ Namespace Controllers
                               .TipoTorneo = t.TipoTorneo,
                               .Categoria = t.Categoria,
                               .Estado = t.Estado,
-                              .Ciudad = If(t.Ciudad IsNot Nothing, t.Ciudad.Nombre, "Regional")
+                              .Confederacion = If(t.Confederacion IsNot Nothing, t.Confederacion.Nombre, ""),
+                              .Pais = If(t.Pais IsNot Nothing, t.Pais.Nombre, ""),
+                              .Region = If(t.Region IsNot Nothing, t.Region.Nombre, ""),
+                              .Ciudad = If(t.Ciudad IsNot Nothing, t.Ciudad.Nombre, "")
                           }
             Return New JsonResult With {.Data = listado, .JsonRequestBehavior = JsonRequestBehavior.AllowGet}
         End Function

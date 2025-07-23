@@ -1,14 +1,63 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
-    listarEquipos();
+﻿// Variable global para filtros
+const filtrosEquipos = {
+    nombre: '',
+    codigo: '',
+    tipo: '',
+    estado: '',
+    region: '',
+    ciudad: ''
+};
 
-    document.getElementById("formEquipo").addEventListener("submit", function (e) {
-        e.preventDefault();
-        guardarEquipo();
-    });
+document.addEventListener("DOMContentLoaded", function () {
+    // Usar jQuery para asegurar que el DOM esté completamente cargado
+    $(document).ready(function () {
+        listarEquipos();
+        cargarRegionesEnFiltro(); // Carga las regiones para el filtro
+        cargarRegionesParaFormulario(); // Carga las regiones para el formulario del modal
 
-    document.getElementById("selectRegion").addEventListener("change", function () {
-        const regionID = this.value;
-        cargarCiudades(regionID);
+        // Event listeners para los filtros
+        document.getElementById('filter-nombreEquipo').addEventListener('input', () => listarEquipos());
+        document.getElementById('filter-codigoEquipo').addEventListener('input', () => listarEquipos());
+        document.getElementById('filter-tipoEquipo').addEventListener('change', () => listarEquipos());
+        document.getElementById('filter-estadoEquipo').addEventListener('change', () => listarEquipos());
+
+        document.getElementById('filter-regionEquipo').addEventListener('change', function () {
+            const regionID = this.value;
+            cargarCiudadesEnFiltro(regionID); // Carga las ciudades para el filtro
+            listarEquipos();
+        });
+
+        document.getElementById('filter-ciudadEquipo').addEventListener('change', () => listarEquipos());
+
+        // Event listener para el botón "Crear Equipo"
+        const btnAbrirModalNuevo = document.getElementById('btnAbrirModalNuevoEquipo');
+        if (btnAbrirModalNuevo) {
+            btnAbrirModalNuevo.addEventListener('click', abrirModalNuevo);
+        }
+
+        // Listener para el select de regiones en el formulario del modal
+        document.getElementById("selectRegion").addEventListener("change", function () {
+            const regionID = this.value;
+            cargarCiudades(regionID);
+        });
+
+        // Listeners para cerrar modal al clickear fuera o con ESC
+        document.addEventListener('click', function (event) {
+            const modal = document.getElementById('modalEquipo');
+            const modalContent = document.getElementById('modalEquipoContent');
+            if (event.target === modal && !modalContent.contains(event.target)) {
+                cerrarModal();
+            }
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('modalEquipo');
+                if (!modal.classList.contains('hidden')) {
+                    cerrarModal();
+                }
+            }
+        });
     });
 });
 
@@ -24,13 +73,14 @@ function abrirModalNuevo() {
     document.getElementById("selectTipoEquipo").value = "";
     document.getElementById("selectEstado").value = "Activo";
 
-    cargarRegiones();
+    cargarRegionesParaFormulario(); // Asegura que las regiones se carguen cada vez que se abre el modal
     mostrarModal();
 }
 
 function cerrarModal() {
     ocultarModal();
     document.getElementById("formEquipo").reset();
+    document.getElementById("selectCiudad").innerHTML = "<option value=''>-- Seleccione Ciudad --</option>"; // Resetear ciudades
 }
 
 function mostrarModal() {
@@ -55,106 +105,165 @@ function ocultarModal() {
     }, 200);
 }
 
+// ... (inside equipo.js)
+
 function listarEquipos() {
-    fetch("/Equipos/Listar") // Corrected URL
+    const nombre = document.getElementById('filter-nombreEquipo').value.trim();
+    const codigo = document.getElementById('filter-codigoEquipo').value.trim();
+    const tipo = document.getElementById('filter-tipoEquipo').value;
+    const estado = document.getElementById('filter-estadoEquipo').value;
+    const regionId = document.getElementById('filter-regionEquipo').value;
+    const ciudadId = document.getElementById('filter-ciudadEquipo').value;
+
+    // Build query parameters
+    const queryParams = new URLSearchParams();
+    if (nombre) queryParams.append('nombre', nombre);
+    if (codigo) queryParams.append('codigo', codigo);
+    if (tipo) queryParams.append('tipo', tipo);
+    if (estado) queryParams.append('estado', estado);
+    if (regionId) queryParams.append('regionId', regionId);
+    if (ciudadId) queryParams.append('ciudadId', ciudadId);
+
+    fetch(`/Equipos/Listar?${queryParams.toString()}`) // Send filters as query parameters
         .then(res => res.json())
-        .then(data => {
-            const tablaBody = document.querySelector("#tablaEquipos tbody");
-            tablaBody.innerHTML = "";
-            let filaPar = true;
-
-            data.data.forEach((e, index) => {
-                const claseFila = filaPar ? "table-row-even" : "table-row-odd";
-                filaPar = !filaPar;
-
-                const row = document.createElement("tr");
-                row.className = `${claseFila} hover:bg-gray-600/50 transition-colors`;
-
-                const tdNombre = document.createElement("td");
-                tdNombre.className = "p-4 font-medium";
-                tdNombre.textContent = e.Nombre;
-
-                const tdCodigoEquipo = document.createElement("td");
-                tdCodigoEquipo.className = "p-4";
-                tdCodigoEquipo.textContent = e.CodigoEquipo;
-
-                const tdRegion = document.createElement("td");
-                tdRegion.className = "p-4";
-                tdRegion.textContent = e.NombreRegion || "N/A";
-
-                const tdCiudad = document.createElement("td");
-                tdCiudad.className = "p-4";
-                tdCiudad.textContent = e.NombreCiudad || "N/A";
-
-                const tdAnoFundacion = document.createElement("td");
-                tdAnoFundacion.className = "p-4 text-center";
-                tdAnoFundacion.textContent = e.AñoFundacion || "N/A";
-
-                const tdELO = document.createElement("td");
-                tdELO.className = "p-4 text-center";
-                tdELO.textContent = e.ELO !== null ? e.ELO.toFixed(2) : "N/A";
-
-                const tdTipoEquipo = document.createElement("td");
-                tdTipoEquipo.className = "p-4";
-                tdTipoEquipo.textContent = e.TipoEquipo;
-
-                const tdEstado = document.createElement("td");
-                tdEstado.className = "p-4";
-                tdEstado.textContent = e.Estado;
-
-                const tdAcciones = document.createElement("td");
-                tdAcciones.className = "p-4 text-center";
-                tdAcciones.innerHTML = `
-                    <div class="flex justify-center gap-2">
-                        <button class="p-2 rounded-md hover:bg-gray-600" title="Editar" onclick="editarEquipo(${e.EquipoID})">
-                            <i data-lucide="edit" class="w-4 h-4 text-yellow-400"></i>
-                        </button>
-                        <button class="p-2 rounded-md hover:bg-gray-600" title="Eliminar" onclick="eliminarEquipo(${e.EquipoID})">
-                            <i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i>
-                        </button>
-                    </div>
-                `;
-
-                row.appendChild(tdNombre);
-                row.appendChild(tdCodigoEquipo);
-                row.appendChild(tdRegion);
-                row.appendChild(tdCiudad);
-                row.appendChild(tdAnoFundacion);
-                row.appendChild(tdELO);
-                row.appendChild(tdTipoEquipo);
-                row.appendChild(tdEstado);
-                row.appendChild(tdAcciones);
-                tablaBody.appendChild(row);
-            });
-
-            lucide.createIcons();
+        .then(response => {
+            if (response.success) { // Check for the success flag
+                const equipos = response.data && Array.isArray(response.data) ? response.data : [];
+                crearListadoEquipos(equipos);
+            } else {
+                console.error("Error del servidor al listar equipos:", response.message);
+                const tablaBody = document.querySelector("#tablaEquipos tbody");
+                if (tablaBody) {
+                    tablaBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-red-400">Error al cargar los equipos: ${response.message}</td></tr>`;
+                }
+            }
         })
         .catch(error => {
-            console.error("Error al listar equipos:", error);
-            alert("Error al cargar los equipos.");
+            console.error("Error de red o procesamiento al listar equipos:", error);
+            const tablaBody = document.querySelector("#tablaEquipos tbody");
+            if (tablaBody) {
+                tablaBody.innerHTML = '<tr><td colspan="9" class="p-4 text-center text-red-400">Error de conexión al cargar los equipos.</td></tr>';
+            }
         });
 }
 
-function cargarRegiones() {
-    return fetch("/Equipos/GetRegiones") // Corrected URL
+// ... rest of your equipo.js functions
+
+function crearListadoEquipos(data) {
+    const tablaBody = document.querySelector("#tablaEquipos tbody");
+    if (!tablaBody) {
+        console.error("Error: Elemento <tbody> con ID #tablaEquipos tbody no encontrado.");
+        return;
+    }
+    tablaBody.innerHTML = ""; // Limpia la tabla antes de añadir nuevos datos
+    let filaPar = true;
+
+    if (data && Array.isArray(data) && data.length > 0) {
+        data.forEach(e => {
+            const claseFila = filaPar ? "table-row-even" : "table-row-odd";
+            filaPar = !filaPar;
+
+            const row = `
+                <tr class="${claseFila} hover:bg-gray-600/50 transition-colors">
+                    <td class="p-4 font-medium **text-white**">${e.Nombre || ''}</td>
+                    <td class="p-4 **text-white**">${e.CodigoEquipo || ''}</td>
+                    <td class="p-4 **text-white**">${e.NombreRegion || 'N/A'}</td>
+                    <td class="p-4 **text-white**">${e.NombreCiudad || 'N/A'}</td>
+                    <td class="p-4 text-center **text-white**">${e.AñoFundacion || 'N/A'}</td>
+                    <td class="p-4 text-center **text-white**">${e.ELO !== null ? e.ELO.toFixed(2) : 'N/A'}</td>
+                    <td class="p-4 **text-white**">${e.TipoEquipo || ''}</td>
+                    <td class="p-4 **text-white**">${e.Estado || ''}</td>
+                    <td class="p-4 text-center">
+                        <div class="flex justify-center gap-2">
+                            <button class="p-2 rounded-md hover:bg-gray-600" title="Editar" onclick="editarEquipo(${e.EquipoID})">
+                                <i data-lucide="edit" class="w-4 h-4 text-yellow-400"></i>
+                            </button>
+                            <button class="p-2 rounded-md hover:bg-gray-600" title="Eliminar" onclick="eliminarEquipo(${e.EquipoID})">
+                                <i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            tablaBody.insertAdjacentHTML('beforeend', row);
+        });
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+        }
+    } else {
+        tablaBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-gray-400">No se encontraron equipos que coincidan con los filtros.</td></tr>';
+    }
+}
+
+// Carga las regiones para el select de filtro
+function cargarRegionesEnFiltro() {
+    return fetch("/Equipos/GetRegiones")
         .then(res => res.json())
         .then(data => {
-            const selectRegion = document.getElementById("selectRegion");
-            selectRegion.innerHTML = "<option value=''>-- Seleccione Región --</option>";
+            const selectRegionFiltro = document.getElementById("filter-regionEquipo");
+            selectRegionFiltro.innerHTML = "<option value=''>Todas las Regiones</option>";
             data.forEach(r => {
                 const option = document.createElement("option");
                 option.value = r.RegionID;
                 option.innerText = r.Nombre;
-                selectRegion.appendChild(option);
+                selectRegionFiltro.appendChild(option);
             });
         })
         .catch(error => {
-            console.error("Error al cargar regiones:", error);
-            alert("Error al cargar las regiones.");
+            console.error("Error al cargar regiones para filtro:", error);
+            alert("Error al cargar las regiones para el filtro.");
             return Promise.reject(error);
         });
 }
 
+// Carga las ciudades para el select de filtro
+function cargarCiudadesEnFiltro(regionId) {
+    const selectCiudadFiltro = document.getElementById("filter-ciudadEquipo");
+    selectCiudadFiltro.innerHTML = "<option value=''>Todas las Ciudades</option>";
+
+    if (!regionId) {
+        return Promise.resolve();
+    }
+
+    return fetch(`/Equipos/GetCiudades?regionId=${regionId}`)
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(c => {
+                const option = document.createElement("option");
+                option.value = c.CiudadID;
+                option.innerText = c.Nombre;
+                selectCiudadFiltro.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error("Error al cargar ciudades para filtro:", error);
+            alert("Error al cargar las ciudades para el filtro.");
+            return Promise.reject(error);
+        });
+}
+
+// Carga las regiones para el select del formulario (modal)
+function cargarRegionesParaFormulario() {
+    return fetch("/Equipos/GetRegiones")
+        .then(res => res.json())
+        .then(data => {
+            const selectRegionForm = document.getElementById("selectRegion");
+            selectRegionForm.innerHTML = "<option value=''>-- Seleccione Región --</option>";
+            data.forEach(r => {
+                const option = document.createElement("option");
+                option.value = r.RegionID;
+                option.innerText = r.Nombre;
+                selectRegionForm.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error("Error al cargar regiones para formulario:", error);
+            alert("Error al cargar las regiones para el formulario.");
+            return Promise.reject(error);
+        });
+}
+
+// Carga las ciudades para el select del formulario (modal)
 function cargarCiudades(regionId) {
     const selectCiudad = document.getElementById("selectCiudad");
     selectCiudad.innerHTML = "<option value=''>-- Seleccione Ciudad --</option>";
@@ -163,7 +272,7 @@ function cargarCiudades(regionId) {
         return Promise.resolve();
     }
 
-    return fetch(`/Equipos/GetCiudades?regionId=${regionId}`) // Corrected URL
+    return fetch(`/Equipos/GetCiudades?regionId=${regionId}`)
         .then(res => res.json())
         .then(data => {
             data.forEach(c => {
@@ -218,7 +327,7 @@ function guardarEquipo() {
         return;
     }
 
-    fetch("/Equipos/Guardar", { // Corrected URL
+    fetch("/Equipos/Guardar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(equipo)
@@ -244,10 +353,11 @@ function guardarEquipo() {
         });
 }
 
-function editarEquipo(id) {
-    cargarRegiones()
+// Hacer las funciones de edición y eliminación globales para que sean accesibles desde el HTML
+window.editarEquipo = function (id) {
+    cargarRegionesParaFormulario() // Asegura que las regiones del formulario estén cargadas
         .then(() => {
-            fetch(`/Equipos/Buscar?id=${id}`) // Corrected URL
+            fetch(`/Equipos/Buscar?id=${id}`)
                 .then(res => {
                     if (!res.ok) {
                         return res.json().then(err => { throw new Error(err.message || "Error al buscar el equipo para edición."); });
@@ -255,26 +365,25 @@ function editarEquipo(id) {
                     return res.json();
                 })
                 .then(e => {
+                    if (e.success === false) {
+                        throw new Error(e.message || "Equipo no encontrado.");
+                    }
+
                     document.getElementById("tituloModal").innerText = "Editar Equipo";
                     document.getElementById("txtEquipoID").value = e.EquipoID;
                     document.getElementById("txtNombre").value = e.Nombre;
                     document.getElementById("txtCodigoEquipo").value = e.CodigoEquipo;
                     document.getElementById("selectRegion").value = e.RegionID || "";
+
+                    // Cargar ciudades del equipo y luego establecer el valor
                     return cargarCiudades(e.RegionID).then(() => {
                         document.getElementById("selectCiudad").value = e.CiudadID || "";
+                        document.getElementById("txtAnoFundacion").value = e.AñoFundacion || "";
+                        document.getElementById("txtELO").value = e.ELO !== null ? e.ELO.toFixed(2) : "";
+                        document.getElementById("selectTipoEquipo").value = e.TipoEquipo || "";
+                        document.getElementById("selectEstado").value = e.Estado || "Activo";
+                        mostrarModal();
                     });
-                })
-                .then(() => {
-                    const equipoData = document.getElementById("txtEquipoID").value;
-                    fetch(`/Equipos/Buscar?id=${equipoData}`) // Corrected URL
-                        .then(res => res.json())
-                        .then(e => {
-                            document.getElementById("txtAnoFundacion").value = e.AñoFundacion || "";
-                            document.getElementById("txtELO").value = e.ELO !== null ? e.ELO.toFixed(2) : "";
-                            document.getElementById("selectTipoEquipo").value = e.TipoEquipo || "";
-                            document.getElementById("selectEstado").value = e.Estado || "Activo";
-                            mostrarModal();
-                        });
                 })
                 .catch(error => {
                     console.error("Error al cargar equipo para edición:", error);
@@ -283,12 +392,12 @@ function editarEquipo(id) {
         });
 }
 
-function eliminarEquipo(id) {
+window.eliminarEquipo = function (id) {
     if (!confirm("¿Estás seguro de que deseas eliminar este equipo?")) {
         return;
     }
 
-    fetch(`/Equipos/Eliminar?id=${id}`, { method: "POST" }) // Corrected URL
+    fetch(`/Equipos/Eliminar?id=${id}`, { method: "POST" })
         .then(res => {
             if (!res.ok) {
                 return res.json().then(err => { throw new Error(err.message || "Error al eliminar el equipo."); });
@@ -308,20 +417,3 @@ function eliminarEquipo(id) {
             alert("Error al eliminar el equipo: " + error.message);
         });
 }
-
-document.addEventListener('click', function (event) {
-    const modal = document.getElementById('modalEquipo');
-    const content = document.getElementById('modalEquipoContent');
-    if (event.target === modal && !content.contains(event.target)) {
-        cerrarModal();
-    }
-});
-
-document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') {
-        const modal = document.getElementById('modalEquipo');
-        if (!modal.classList.contains('hidden')) {
-            cerrarModal();
-        }
-    }
-});
