@@ -21,7 +21,8 @@ Namespace Controllers
                         Optional tipo As String = Nothing,
                         Optional estado As String = Nothing,
                         Optional regionId As Integer? = Nothing,
-                        Optional ciudadId As Integer? = Nothing) As JsonResult
+                        Optional ciudadId As Integer? = Nothing,
+                        Optional idTorneo As Integer? = Nothing) As JsonResult ' Added idTorneo parameter
             Try
                 Dim query = db.Equipo.Include("Region").Include("Ciudad").AsQueryable()
 
@@ -43,6 +44,15 @@ Namespace Controllers
                 End If
                 If ciudadId.HasValue AndAlso ciudadId.Value > 0 Then
                     query = query.Where(Function(e) e.CiudadID = ciudadId.Value)
+                End If
+
+                ' NEW FILTER: Filter by Tournament ID
+                If idTorneo.HasValue AndAlso idTorneo.Value > 0 Then
+                    ' Join with TorneoEquipo to filter by teams associated with the given tournament
+                    query = From e In query
+                            Join te In db.TorneoEquipo On e.EquipoID Equals te.EquipoID
+                            Where te.TorneoID = idTorneo.Value
+                            Select e
                 End If
 
                 Dim equipos = query.Select(Function(e) New With {

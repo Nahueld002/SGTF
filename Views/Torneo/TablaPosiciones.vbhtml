@@ -5,9 +5,14 @@ End Code
 
 <div class="flex justify-between items-center mb-6">
     <h2 class="text-3xl font-bold text-white">Tabla de Posiciones: <span id="standingsTorneoName" class="text-green-400"></span></h2>
-    <a href="@Url.Action("Index", "Torneo")" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors">
-        <i data-lucide="arrow-left" class="w-5 h-5"></i> Volver a Torneos
-    </a>
+    <div class="flex items-center gap-4">
+        <button id="btnSimulateFullTournament" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors">
+            <i data-lucide="play" class="w-5 h-5"></i> Simular Torneo Completo
+        </button>
+        <a href="@Url.Action("Index", "Torneo")" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors">
+            <i data-lucide="arrow-left" class="w-5 h-5"></i> Volver a Torneos
+        </a>
+    </div>
 </div>
 
 <div class="card p-4 mb-6 rounded-lg">
@@ -65,15 +70,58 @@ End Code
         background-color: rgba(31, 41, 55, 0.8);
         border: 1px solid rgba(107, 114, 128, 0.3);
     }
+
+    /* Styles for the loading spinner */
+    .spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top: 4px solid #fff;
+        width: 24px;
+        height: 24px;
+        -webkit-animation: spin 1s linear infinite; /* Safari */
+        animation: spin 1s linear infinite;
+    }
+
+    /* Safari */
+    -webkit-keyframes spin {
+        0%
+
+    {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+
+    }
+
+    keyframes spin {
+        0%
+
+    {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+    }
 </style>
 
 @section Scripts
     <script src="/scripts/jquery-3.7.1.min.js"></script>
+    <script src="~/scripts/js/Torneo.js"></script>
+
     <script>
         $(document).ready(function () {
             const urlParams = new URLSearchParams(window.location.search);
             const torneoID = urlParams.get('torneoID');
             const torneoNombre = urlParams.get('torneoNombre');
+
+            // Store these values for easy access by the simulate button
+            // We can directly use the JavaScript variables as they are in scope
+            // when the button's click handler is defined. No need for data attributes here.
 
             if (torneoID && torneoNombre) {
                 $('#standingsTorneoName').text(decodeURIComponent(torneoNombre));
@@ -82,6 +130,8 @@ End Code
                 $('#standingsTorneoName').text('No se encontró el torneo.');
                 $('#standingsTableContainer').addClass('hidden');
                 $('#noStandingsMessage').removeClass('hidden').text('No se encontró un ID de torneo válido.');
+                // Disable the simulate button if no valid tournament is found
+                $('#btnSimulateFullTournament').prop('disabled', true);
             }
 
             $('#standingsYear').change(function () {
@@ -89,6 +139,65 @@ End Code
                     loadStandings(torneoID, $(this).val());
                 }
             });
+
+            // Handler for the "Simular Torneo Completo" button
+            $('#btnSimulateFullTournament').click(function () {
+                const currentTorneoID = torneoID; // Use the variable from URL params
+                const currentTorneoNombre = decodeURIComponent(torneoNombre); // Use the variable from URL params
+                const currentYear = $('#standingsYear').val(); // Get the currently selected year from the dropdown
+
+                if (!currentTorneoID || !currentTorneoNombre || !currentYear) {
+                    alert('No se pudo obtener la información completa del torneo para simular.');
+                    return;
+                }
+
+                // Confirm with the user before performing a full simulation
+                if (!confirm(`¿Estás seguro de que quieres simular TODO el torneo "${currentTorneoNombre}" para el año ${currentYear}? Esto afectará todos los partidos pendientes y las tablas de posiciones.`)) {
+                    return; // User cancelled
+                }
+
+                const $button = $(this);
+                $button.prop('disabled', true).html('<div class="spinner"></div> Simulando...');
+
+                // Important: Call the SimularPartidos action in TorneoController
+                // For a full tournament simulation, you need to pass a 'fase' that your stored procedure
+                // `spSimularTorneoElo` will interpret as a signal to simulate the entire tournament.
+                // If your SP starts from "Fase de Grupos" and handles advancement, pass that.
+                // If an empty string or null means "simulate all phases", pass that.
+                // Let's assume for now that passing "Fase de Grupos" is the trigger to start a full simulation
+                // and the SP handles progression. Adjust 'fase' value as per your SP's logic.
+                const phaseForFullSimulation = "Fase de Grupos";
+
+                $.ajax({
+                    url: '@Url.Action("SimularPartidos", "Torneo")', // Call the action in TorneoController
+                    type: 'POST',
+                    data: {
+                        torneoID: currentTorneoID,
+                        torneoNombre: currentTorneoNombre,
+                        año: currentYear,
+                        fase: phaseForFullSimulation // Pass the initial phase or special value for full simulation
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            // After simulation, reload the standings for the current tournament and year
+                            loadStandings(currentTorneoID, currentYear);
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error al simular torneo completo:", error);
+                        alert("Error al simular torneo completo: " + (xhr.responseJSON ? xhr.responseJSON.message : "Error desconocido"));
+                    },
+                    complete: function () {
+                        $button.prop('disabled', false).html('<i data-lucide="play" class="w-5 h-5"></i> Simular Torneo Completo');
+                        lucide.createIcons(); // Re-render Lucide icons after changing button content
+                    }
+                });
+            });
+
+            lucide.createIcons(); // Initialize Lucide icons on page load
         });
 
         function loadStandings(torneoID, year) {
@@ -133,4 +242,4 @@ End Code
             });
         }
     </script>
-    End Section
+End Section

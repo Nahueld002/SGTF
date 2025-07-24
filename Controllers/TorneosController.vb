@@ -1,6 +1,9 @@
-﻿Imports System.Web.Mvc
-Imports System.Linq ' Make sure this import is present for LINQ queries
-Imports System.Collections.Generic ' For List(Of T)
+﻿Imports System.Collections.Generic
+Imports System.Configuration ' Added for ConfigurationManager
+Imports System.Data.SqlClient ' Added for SQL connection
+Imports System.Linq
+Imports System.Web.Mvc
+Imports System.Data.Entity.Core.EntityClient
 
 Namespace Controllers
     Public Class TorneoController
@@ -77,15 +80,15 @@ Namespace Controllers
             Dim torneo = From t In db.Torneo
                          Where t.TorneoID = id
                          Select New With {
-                             .TorneoID = t.TorneoID,
-                             .Nombre = t.Nombre,
-                             .TipoTorneo = t.TipoTorneo,
-                             .Categoria = t.Categoria,
-                             .Estado = t.Estado,
-                             .CiudadID = t.CiudadID,
-                             .PaisID = t.PaisID,
-                             .RegionID = t.RegionID,
-                             .ConfederacionID = t.ConfederacionID
+                              .TorneoID = t.TorneoID,
+                              .Nombre = t.Nombre,
+                              .TipoTorneo = t.TipoTorneo,
+                              .Categoria = t.Categoria,
+                              .Estado = t.Estado,
+                              .CiudadID = t.CiudadID,
+                              .PaisID = t.PaisID,
+                              .RegionID = t.RegionID,
+                              .ConfederacionID = t.ConfederacionID
                          }
             Return New JsonResult With {.Data = torneo, .JsonRequestBehavior = JsonRequestBehavior.AllowGet}
         End Function
@@ -186,9 +189,9 @@ Namespace Controllers
                                            Join e In db.Equipo On te.EquipoID Equals e.EquipoID
                                            Where te.TorneoID = torneoID And te.AñoParticipacion = año
                                            Select New With {
-                                           .EquipoID = e.EquipoID,
-                                           .EquipoNombre = e.Nombre
-                                       }
+                                               .EquipoID = e.EquipoID,
+                                               .EquipoNombre = e.Nombre
+                                           }
 
                 Dim tablaPosiciones = New List(Of PosicionTabla)()
                 Dim equiposStats As New Dictionary(Of Integer, PosicionTabla)
@@ -199,7 +202,7 @@ Namespace Controllers
                     .Equipo = equipoData.EquipoNombre,
                     .PJ = 0, .PG = 0, .PE = 0, .PP = 0,
                     .GF = 0, .GC = 0, .DG = 0, .PTS = 0
-                })
+                    })
                 Next
 
                 ' --- MODIFICATION END ---
@@ -213,7 +216,7 @@ Namespace Controllers
                                         .Partido = p,
                                         .EquipoLocalID = teLocal.EquipoID,
                                         .EquipoVisitanteID = teVisitante.EquipoID
-                                    }
+                                        }
 
                 ' Calculate stats for each match (only for teams that are in equiposStats and have played)
                 For Each partidoData In partidosDelTorneo
@@ -263,9 +266,9 @@ Namespace Controllers
 
                 ' Order the standings (e.g., by PTS, then DG, then GF)
                 Dim posicionesOrdenadas = tablaPosiciones.OrderByDescending(Function(p) p.PTS) _
-                                                .ThenByDescending(Function(p) p.DG) _
-                                                .ThenByDescending(Function(p) p.GF) _
-                                                .ToList()
+                                                        .ThenByDescending(Function(p) p.DG) _
+                                                        .ThenByDescending(Function(p) p.GF) _
+                                                        .ToList()
 
                 Return Json(posicionesOrdenadas, JsonRequestBehavior.AllowGet)
 
@@ -275,10 +278,45 @@ Namespace Controllers
                 Return Json(New List(Of PosicionTabla)(), JsonRequestBehavior.AllowGet)
             End Try
         End Function
+
         Function TablaPosiciones(torneoID As Integer, Optional torneoNombre As String = "") As ActionResult
             ViewBag.TorneoID = torneoID
             ViewBag.TorneoNombre = torneoNombre
             Return View()
+        End Function
+
+        <HttpPost()>
+        Function SimularPartidos(torneoID As Integer, torneoNombre As String, año As Integer, fase As String) As ActionResult
+            Try
+                ' 1. Get the full Entity Framework connection string from Web.config
+                Dim efConnectionString As String = ConfigurationManager.ConnectionStrings("FutbolDB2Entities").ConnectionString
+
+                ' 2. Extract the underlying pure SQL Server connection string
+                Dim entityBuilder As New EntityConnectionStringBuilder(efConnectionString)
+                Dim sqlConnectionString As String = entityBuilder.ProviderConnectionString
+
+                ' 3. Use the extracted pure SQL connection string with SqlConnection
+                Using conn As New SqlConnection(sqlConnectionString)
+                    Using cmd As New SqlCommand("spSimularTorneoElo", conn)
+                        cmd.CommandType = CommandType.StoredProcedure
+
+                        ' 4. CORRECTED PARAMETER NAMES TO MATCH THE STORED PROCEDURE DEFINITION
+                        cmd.Parameters.AddWithValue("@TorneoNombre", torneoNombre)      ' This passes the torneoNombre from the action method
+                        cmd.Parameters.AddWithValue("@AñoParticipacion", año)           ' This matches @AñoParticipacion in the SP
+                        conn.Open()
+                        cmd.ExecuteNonQuery()
+                    End Using
+                End Using
+
+                Return Json(New With {.success = True, .message = "Simulación de torneo completa exitosamente."})
+
+            Catch ex As Exception
+                System.Diagnostics.Debug.WriteLine($"Error en SimularPartidos: {ex.Message}")
+                If ex.InnerException IsNot Nothing Then
+                    System.Diagnostics.Debug.WriteLine($"Inner Exception: {ex.InnerException.Message}")
+                End If
+                Return Json(New With {.success = False, .message = "Error al simular torneo: " & ex.Message & If(ex.InnerException IsNot Nothing, " (Detalle: " & ex.InnerException.Message & ")", "")})
+            End Try
         End Function
 
 
