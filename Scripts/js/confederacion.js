@@ -156,4 +156,4 @@ document.addEventListener("keydown", e => {
     if (e.key === "Escape" &&
         !document.getElementById("modalConfederacion").classList.contains("hidden"))
         ocultarModal();
-});
+}); 
