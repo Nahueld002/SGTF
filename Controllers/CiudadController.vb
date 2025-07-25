@@ -1,56 +1,48 @@
 ﻿Imports System.Net
 Imports System.Web.Mvc
-Imports SGTF.Models ' Asegúrate de que tu modelo Ciudad esté en este Namespace
+Imports SGTF.Models
 Imports System.Data.Entity
 
 Namespace Controllers
-    Public Class CiudadController ' Renombrado de RegionController a CiudadController
+    Public Class CiudadController
         Inherits Controller
 
-        Private db As New FutbolDB2Entities() ' Tu contexto de base de datos
+        Private db As New FutbolDB2Entities()
 
-        ' GET: Ciudad
         Function Index() As ActionResult
             Return View()
         End Function
 
-        ' GET: Ciudad/Listar
         Function Listar() As JsonResult
-            ' Incluimos el objeto Region para poder acceder al nombre de la región
             Dim ciudades = db.Ciudad.Include("Region").Select(Function(c) New With {
                 .CiudadID = c.CiudadID,
                 .Nombre = c.Nombre,
                 .RegionID = c.RegionID,
-                .EsCapital = c.EsCapital, ' Añadido EsCapital
-                .NombreRegion = c.Region.Nombre ' Obtenemos el nombre de la Región relacionada
+                .EsCapital = c.EsCapital,
+                .NombreRegion = c.Region.Nombre
             }).ToList()
             Return Json(New With {.data = ciudades}, JsonRequestBehavior.AllowGet)
         End Function
 
-        ' GET: Ciudad/GetRegiones
-        ' Función para obtener las regiones para el DropDownList en el formulario de Ciudad
         Function GetRegiones() As JsonResult
             Dim regiones = db.Region.Select(Function(r) New With {
                 .RegionID = r.RegionID,
                 .Nombre = r.Nombre
-            }).OrderBy(Function(r) r.Nombre).ToList() ' Opcional: ordenar por nombre
+            }).OrderBy(Function(r) r.Nombre).ToList()
             Return Json(regiones, JsonRequestBehavior.AllowGet)
         End Function
 
-        ' POST: Ciudad/Guardar
         <HttpPost()>
-        Function Guardar(ciudad As Ciudad) As JsonResult ' Cambiado de Region a Ciudad
+        Function Guardar(ciudad As Ciudad) As JsonResult
             Try
                 If ciudad.CiudadID = 0 Then
-                    ' Añadir nueva ciudad
                     db.Ciudad.Add(ciudad)
                 Else
-                    ' Actualizar ciudad existente
                     Dim existingCiudad = db.Ciudad.Find(ciudad.CiudadID)
                     If existingCiudad IsNot Nothing Then
                         existingCiudad.Nombre = ciudad.Nombre
                         existingCiudad.RegionID = ciudad.RegionID
-                        existingCiudad.EsCapital = ciudad.EsCapital ' Actualizado EsCapital
+                        existingCiudad.EsCapital = ciudad.EsCapital
                     Else
                         Return Json(New With {.success = False, .message = "Ciudad no encontrada para actualizar."})
                     End If
@@ -63,25 +55,46 @@ Namespace Controllers
             End Try
         End Function
 
-        ' GET: Ciudad/Buscar/5
-        Function Buscar(id As Integer) As JsonResult
-            Dim ciudad = db.Ciudad.Find(id) ' Cambiado de db.Region a db.Ciudad
-            If ciudad Is Nothing Then
-                Return Json(New With {.success = False, .message = "Ciudad no encontrada."}, JsonRequestBehavior.AllowGet)
-            End If
-            Return Json(ciudad, JsonRequestBehavior.AllowGet)
+        Function Buscar(id As Integer) As ActionResult
+            Try
+                db.Configuration.LazyLoadingEnabled = False
+                db.Configuration.ProxyCreationEnabled = False
+
+                Dim ciudadDTO = db.Ciudad.AsNoTracking() _
+                    .Where(Function(c) c.CiudadID = id) _
+                    .Select(Function(c) New With {
+                        .success = True,
+                        .CiudadID = c.CiudadID,
+                        .Nombre = c.Nombre,
+                        .RegionID = c.RegionID,
+                        .EsCapital = c.EsCapital
+                    }).FirstOrDefault()
+
+                If ciudadDTO Is Nothing Then
+                    Response.StatusCode = 404
+                    Return Json(New With {.success = False, .message = "Ciudad no encontrada."},
+                                 JsonRequestBehavior.AllowGet)
+                End If
+
+                Return Json(ciudadDTO, JsonRequestBehavior.AllowGet)
+
+            Catch ex As Exception
+                System.Diagnostics.Debug.WriteLine($"Error Buscar Ciudad: {ex}")
+                Response.StatusCode = 500
+                Return Json(New With {.success = False, .message = ex.Message},
+                                 JsonRequestBehavior.AllowGet)
+            End Try
         End Function
 
-        ' POST: Ciudad/Eliminar/5
         <HttpPost()>
         Function Eliminar(id As Integer) As JsonResult
             Try
-                Dim ciudad = db.Ciudad.Find(id) ' Cambiado de db.Region a db.Ciudad
+                Dim ciudad = db.Ciudad.Find(id)
                 If ciudad Is Nothing Then
                     Return Json(New With {.success = False, .message = "Ciudad no encontrada."})
                 End If
 
-                db.Ciudad.Remove(ciudad) ' Cambiado de db.Region a db.Ciudad
+                db.Ciudad.Remove(ciudad)
                 db.SaveChanges()
 
                 Return Json(New With {.success = True})

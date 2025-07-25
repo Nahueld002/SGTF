@@ -1,5 +1,5 @@
 ﻿@Code
-    ViewData("Title") = "Regiones" ' Título de la vista actualizado
+    ViewData("Title") = "Regiones"
 End Code
 
 <div class="flex justify-between items-center mb-6">
@@ -43,7 +43,6 @@ End Code
             <div class="mb-6">
                 <label for="selectPais" class="block text-sm font-medium text-gray-300 mb-2">País</label>
                 <select id="selectPais" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
-                    ' Las opciones se cargarán con JavaScript
                 </select>
             </div>
 

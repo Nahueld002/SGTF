@@ -1,56 +1,48 @@
 ﻿Imports System.Net
 Imports System.Web.Mvc
-Imports SGTF.Models ' Asegúrate de que tu modelo Region esté en este Namespace
+Imports SGTF.Models
 Imports System.Data.Entity
 
 Namespace Controllers
-    Public Class RegionController ' Renombrado de PaisesController a RegionController
+    Public Class RegionController
         Inherits Controller
 
-        Private db As New FutbolDB2Entities() ' Tu contexto de base de datos
+        Private db As New FutbolDB2Entities()
 
-        ' GET: Region
         Function Index() As ActionResult
             Return View()
         End Function
 
-        ' GET: Region/Listar
         Function Listar() As JsonResult
-            ' Incluimos el objeto Pais para poder acceder al nombre del país
             Dim regiones = db.Region.Include("Pais").Select(Function(r) New With {
                 .RegionID = r.RegionID,
                 .Nombre = r.Nombre,
-                .TipoRegion = r.TipoRegion, ' Añadido TipoRegion
+                .TipoRegion = r.TipoRegion,
                 .PaisID = r.PaisID,
-                .NombrePais = r.Pais.Nombre ' Obtenemos el nombre del País relacionado
+                .NombrePais = r.Pais.Nombre
             }).ToList()
             Return Json(New With {.data = regiones}, JsonRequestBehavior.AllowGet)
         End Function
 
-        ' GET: Region/GetPaises
-        ' Función para obtener los países para el DropDownList en el formulario de Región
         Function GetPaises() As JsonResult
             Dim paises = db.Pais.Select(Function(p) New With {
                 .PaisID = p.PaisID,
                 .Nombre = p.Nombre
-            }).OrderBy(Function(p) p.Nombre).ToList() ' Opcional: ordenar por nombre
+            }).OrderBy(Function(p) p.Nombre).ToList()
             Return Json(paises, JsonRequestBehavior.AllowGet)
         End Function
 
-        ' POST: Region/Guardar
         <HttpPost()>
-        Function Guardar(region As Region) As JsonResult ' Cambiado de Pais a Region
+        Function Guardar(region As Region) As JsonResult
             Try
                 If region.RegionID = 0 Then
-                    ' Añadir nueva región
                     db.Region.Add(region)
                 Else
-                    ' Actualizar región existente
                     Dim existingRegion = db.Region.Find(region.RegionID)
                     If existingRegion IsNot Nothing Then
                         existingRegion.Nombre = region.Nombre
-                        existingRegion.TipoRegion = region.TipoRegion ' Actualizado TipoRegion
-                        existingRegion.PaisID = region.PaisID ' Actualizado PaisID
+                        existingRegion.TipoRegion = region.TipoRegion
+                        existingRegion.PaisID = region.PaisID
                     Else
                         Return Json(New With {.success = False, .message = "Región no encontrada para actualizar."})
                     End If
@@ -63,25 +55,47 @@ Namespace Controllers
             End Try
         End Function
 
-        ' GET: Region/Buscar/5
-        Function Buscar(id As Integer) As JsonResult
-            Dim region = db.Region.Find(id) ' Cambiado de db.Pais a db.Region
-            If region Is Nothing Then
-                Return Json(New With {.success = False, .message = "Región no encontrada."}, JsonRequestBehavior.AllowGet)
-            End If
-            Return Json(region, JsonRequestBehavior.AllowGet)
+        Function Buscar(id As Integer) As ActionResult
+            Try
+                db.Configuration.LazyLoadingEnabled = False
+                db.Configuration.ProxyCreationEnabled = False
+
+                Dim regionDTO = db.Region.AsNoTracking() _
+            .Where(Function(r) r.RegionID = id) _
+            .Select(Function(r) New With {
+                .success = True,
+                .RegionID = r.RegionID,
+                .Nombre = r.Nombre,
+                .TipoRegion = r.TipoRegion,
+                .PaisID = r.PaisID,
+                .NombrePais = r.Pais.Nombre
+            }).FirstOrDefault()
+
+                If regionDTO Is Nothing Then
+                    Response.StatusCode = 404
+                    Return Json(New With {.success = False, .message = "Región no encontrada."},
+                        JsonRequestBehavior.AllowGet)
+                End If
+
+                Return Json(regionDTO, JsonRequestBehavior.AllowGet)
+
+            Catch ex As Exception
+                System.Diagnostics.Debug.WriteLine($"Error Buscar Región: {ex}")
+                Response.StatusCode = 500
+                Return Json(New With {.success = False, .message = ex.Message},
+                    JsonRequestBehavior.AllowGet)
+            End Try
         End Function
 
-        ' POST: Region/Eliminar/5
         <HttpPost()>
         Function Eliminar(id As Integer) As JsonResult
             Try
-                Dim region = db.Region.Find(id) ' Cambiado de db.Pais a db.Region
+                Dim region = db.Region.Find(id)
                 If region Is Nothing Then
                     Return Json(New With {.success = False, .message = "Región no encontrada."})
                 End If
 
-                db.Region.Remove(region) ' Cambiado de db.Pais a db.Region
+                db.Region.Remove(region)
                 db.SaveChanges()
 
                 Return Json(New With {.success = True})

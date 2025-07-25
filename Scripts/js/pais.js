@@ -1,33 +1,27 @@
-﻿// En Scripts/js/pais.js
+﻿document.addEventListener("DOMContentLoaded", function () {
+    listarPaises();
 
-document.addEventListener("DOMContentLoaded", function () {
-    listarPaises(); // Carga los países al cargar la página
-
-    // Manejar el envío del formulario
     document.getElementById("formPais").addEventListener("submit", function (e) {
-        e.preventDefault(); // Previene el envío tradicional del formulario
+        e.preventDefault();
         guardarPais();
     });
 });
 
-// Función para abrir el modal en modo "Crear Nuevo"
 function abrirModalNuevo() {
     document.getElementById("tituloModal").innerText = "Crear País";
-    document.getElementById("txtPaisID").value = "0"; // Indica nuevo registro
-    document.getElementById("txtNombre").value = ""; // Limpiar campo
-    document.getElementById("txtCodigoFIFA").value = ""; // Limpiar campo
-    document.getElementById("selectConfederacion").value = ""; // Resetear selección
-    cargarConfederaciones(); // Cargar opciones de confederaciones
-    mostrarModal(); // Mostrar modal con animación
+    document.getElementById("txtPaisID").value = "0";
+    document.getElementById("txtNombre").value = "";
+    document.getElementById("txtCodigoFIFA").value = "";
+    document.getElementById("selectConfederacion").value = "";
+    cargarConfederaciones();
+    mostrarModal();
 }
 
-// Función para cerrar el modal con animación
 function cerrarModal() {
     ocultarModal();
-    document.getElementById("formPais").reset(); // Resetear el formulario
+    document.getElementById("formPais").reset();
 }
 
-// Funciones para animar el modal
 function mostrarModal() {
     const modal = document.getElementById("modalPais");
     const modalContent = document.getElementById("modalPaisContent");
@@ -36,7 +30,7 @@ function mostrarModal() {
     setTimeout(() => {
         modalContent.classList.remove("opacity-0", "scale-95");
         modalContent.classList.add("opacity-100", "scale-100");
-    }, 10); // Pequeño retraso para la transición
+    }, 10);
 }
 
 function ocultarModal() {
@@ -47,19 +41,18 @@ function ocultarModal() {
     setTimeout(() => {
         modal.classList.remove("flex");
         modal.classList.add("hidden");
-    }, 200); // Coincide con la duración de la transición CSS
+    }, 200);
 }
 
-// Función para listar países en la tabla
 function listarPaises() {
-    fetch("/Paises/Listar") // Cambiar la URL al controlador de Países
+    fetch("/Paises/Listar")
         .then(res => res.json())
         .then(data => {
-            const tablaBody = document.querySelector("#tablaPaises tbody"); // Selector de tabla de Países
-            tablaBody.innerHTML = ""; // Limpiar tabla
+            const tablaBody = document.querySelector("#tablaPaises tbody");
+            tablaBody.innerHTML = "";
             let filaPar = true;
 
-            data.data.forEach((p, index) => { // Iterar sobre los datos de países
+            data.data.forEach((p, index) => {
                 const claseFila = filaPar ? "table-row-even" : "table-row-odd";
                 filaPar = !filaPar;
 
@@ -70,13 +63,13 @@ function listarPaises() {
                 tdNombre.className = "p-4 font-medium";
                 tdNombre.textContent = p.Nombre;
 
-                const tdCodigoFIFA = document.createElement("td"); // Nueva columna para Código FIFA
+                const tdCodigoFIFA = document.createElement("td");
                 tdCodigoFIFA.className = "p-4";
                 tdCodigoFIFA.textContent = p.CodigoFIFA;
 
-                const tdConfederacion = document.createElement("td"); // Nueva columna para Confederación
+                const tdConfederacion = document.createElement("td");
                 tdConfederacion.className = "p-4";
-                tdConfederacion.textContent = p.NombreConfederacion; // Mostrar nombre de la Confederación
+                tdConfederacion.textContent = p.NombreConfederacion;
 
                 const tdAcciones = document.createElement("td");
                 tdAcciones.className = "p-4 text-center";
@@ -98,7 +91,7 @@ function listarPaises() {
                 tablaBody.appendChild(row);
             });
 
-            lucide.createIcons(); // Vuelve a renderizar los iconos Lucide
+            lucide.createIcons();
         })
         .catch(error => {
             console.error("Error al listar países:", error);
@@ -106,13 +99,12 @@ function listarPaises() {
         });
 }
 
-// Función para cargar las confederaciones en el select (dropdown)
 function cargarConfederaciones() {
-    return fetch("/Paises/GetConfederaciones") // URL para obtener las confederaciones
+    return fetch("/Paises/GetConfederaciones")
         .then(res => res.json())
         .then(data => {
             const selectConfederacion = document.getElementById("selectConfederacion");
-            selectConfederacion.innerHTML = "<option value=''>-- Seleccione Confederación --</option>"; // Opción por defecto
+            selectConfederacion.innerHTML = "<option value=''>-- Seleccione Confederación --</option>";
             data.forEach(c => {
                 const option = document.createElement("option");
                 option.value = c.ConfederacionID;
@@ -127,13 +119,12 @@ function cargarConfederaciones() {
         });
 }
 
-// Función para guardar o actualizar un país
 function guardarPais() {
     const pais = {
         PaisID: parseInt(document.getElementById("txtPaisID").value),
         Nombre: document.getElementById("txtNombre").value.trim(),
-        CodigoFIFA: document.getElementById("txtCodigoFIFA").value.trim(), // Campo Código FIFA
-        ConfederacionID: parseInt(document.getElementById("selectConfederacion").value) // Campo Confederación
+        CodigoFIFA: document.getElementById("txtCodigoFIFA").value.trim(),
+        ConfederacionID: parseInt(document.getElementById("selectConfederacion").value)
     };
 
     if (pais.Nombre === "") {
@@ -145,7 +136,7 @@ function guardarPais() {
         return;
     }
 
-    fetch("/Paises/Guardar", { // Cambiar la URL al controlador de Países
+    fetch("/Paises/Guardar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pais)
@@ -172,8 +163,8 @@ function guardarPais() {
 }
 
 function editarPais(id) {
-    cargarConfederaciones().then(() => { // Asegúrate de cargar las confederaciones primero
-        fetch(`/Paises/Buscar?id=${id}`) // Cambiar la URL al controlador de Países
+    cargarConfederaciones().then(() => {
+        fetch(`/Paises/Buscar?id=${id}`)
             .then(res => {
                 if (!res.ok) {
                     return res.json().then(err => { throw new Error(err.message || "Error al buscar el país para edición."); });
@@ -184,9 +175,9 @@ function editarPais(id) {
                 document.getElementById("tituloModal").innerText = "Editar País";
                 document.getElementById("txtPaisID").value = p.PaisID;
                 document.getElementById("txtNombre").value = p.Nombre;
-                document.getElementById("txtCodigoFIFA").value = p.CodigoFIFA; // Cargar Código FIFA
-                document.getElementById("selectConfederacion").value = p.ConfederacionID; // Seleccionar la confederación
-                mostrarModal(); // Mostrar modal con animación
+                document.getElementById("txtCodigoFIFA").value = p.CodigoFIFA;
+                document.getElementById("selectConfederacion").value = p.ConfederacionID;
+                mostrarModal();
             })
             .catch(error => {
                 console.error("Error al cargar país para edición:", error);
@@ -200,7 +191,7 @@ function eliminarPais(id) {
         return;
     }
 
-    fetch(`/Paises/Eliminar?id=${id}`, { method: "POST" }) // Cambiar la URL al controlador de Países
+    fetch(`/Paises/Eliminar?id=${id}`, { method: "POST" })
         .then(res => {
             if (!res.ok) {
                 return res.json().then(err => { throw new Error(err.message || "Error al eliminar el país."); });
@@ -222,8 +213,8 @@ function eliminarPais(id) {
 }
 
 document.addEventListener('click', function (event) {
-    const modal = document.getElementById('modalPais'); 
-    const content = document.getElementById('modalPaisContent'); 
+    const modal = document.getElementById('modalPais');
+    const content = document.getElementById('modalPaisContent');
     if (event.target === modal && !content.contains(event.target)) {
         cerrarModal();
     }
@@ -231,7 +222,7 @@ document.addEventListener('click', function (event) {
 
 document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
-        const modal = document.getElementById('modalPais'); 
+        const modal = document.getElementById('modalPais');
         if (!modal.classList.contains('hidden')) {
             cerrarModal();
         }

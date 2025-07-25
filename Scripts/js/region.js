@@ -1,33 +1,27 @@
-﻿// En Scripts/js/region.js
+﻿document.addEventListener("DOMContentLoaded", function () {
+    listarRegiones();
 
-document.addEventListener("DOMContentLoaded", function () {
-    listarRegiones(); // Carga las regiones al cargar la página
-
-    // Manejar el envío del formulario
     document.getElementById("formRegion").addEventListener("submit", function (e) {
-        e.preventDefault(); // Previene el envío tradicional del formulario
+        e.preventDefault();
         guardarRegion();
     });
 });
 
-// Función para abrir el modal en modo "Crear Nuevo"
 function abrirModalNuevo() {
     document.getElementById("tituloModal").innerText = "Crear Región";
-    document.getElementById("txtRegionID").value = "0"; // Indica nuevo registro
-    document.getElementById("txtNombre").value = ""; // Limpiar campo Nombre
-    document.getElementById("txtTipoRegion").value = ""; // Limpiar campo TipoRegion
-    document.getElementById("selectPais").value = ""; // Resetear selección de País
-    cargarPaises(); // Cargar opciones de países
-    mostrarModal(); // Mostrar modal con animación
+    document.getElementById("txtRegionID").value = "0";
+    document.getElementById("txtNombre").value = "";
+    document.getElementById("txtTipoRegion").value = "";
+    document.getElementById("selectPais").value = "";
+    cargarPaises();
+    mostrarModal();
 }
 
-// Función para cerrar el modal con animación
 function cerrarModal() {
     ocultarModal();
-    document.getElementById("formRegion").reset(); // Resetear el formulario
+    document.getElementById("formRegion").reset();
 }
 
-// Funciones para animar el modal (se mantienen igual, solo cambia el ID del modal)
 function mostrarModal() {
     const modal = document.getElementById("modalRegion");
     const modalContent = document.getElementById("modalRegionContent");
@@ -36,7 +30,7 @@ function mostrarModal() {
     setTimeout(() => {
         modalContent.classList.remove("opacity-0", "scale-95");
         modalContent.classList.add("opacity-100", "scale-100");
-    }, 10); // Pequeño retraso para la transición
+    }, 10);
 }
 
 function ocultarModal() {
@@ -47,19 +41,18 @@ function ocultarModal() {
     setTimeout(() => {
         modal.classList.remove("flex");
         modal.classList.add("hidden");
-    }, 200); // Coincide con la duración de la transición CSS
+    }, 200);
 }
 
-// Función para listar regiones en la tabla
 function listarRegiones() {
-    fetch("/Region/Listar") // Cambiada la URL al controlador de Region
+    fetch("/Region/Listar")
         .then(res => res.json())
         .then(data => {
-            const tablaBody = document.querySelector("#tablaRegiones tbody"); // Selector de tabla de Regiones
-            tablaBody.innerHTML = ""; // Limpiar tabla
+            const tablaBody = document.querySelector("#tablaRegiones tbody");
+            tablaBody.innerHTML = "";
             let filaPar = true;
 
-            data.data.forEach((r, index) => { // Iterar sobre los datos de regiones
+            data.data.forEach((r, index) => {
                 const claseFila = filaPar ? "table-row-even" : "table-row-odd";
                 filaPar = !filaPar;
 
@@ -70,13 +63,13 @@ function listarRegiones() {
                 tdNombre.className = "p-4 font-medium";
                 tdNombre.textContent = r.Nombre;
 
-                const tdTipoRegion = document.createElement("td"); // Nueva columna para Tipo de Región
+                const tdTipoRegion = document.createElement("td");
                 tdTipoRegion.className = "p-4";
                 tdTipoRegion.textContent = r.TipoRegion;
 
-                const tdPais = document.createElement("td"); // Columna para País
+                const tdPais = document.createElement("td");
                 tdPais.className = "p-4";
-                tdPais.textContent = r.NombrePais; // Mostrar nombre del País
+                tdPais.textContent = r.NombrePais;
 
                 const tdAcciones = document.createElement("td");
                 tdAcciones.className = "p-4 text-center";
@@ -98,7 +91,7 @@ function listarRegiones() {
                 tablaBody.appendChild(row);
             });
 
-            lucide.createIcons(); // Vuelve a renderizar los iconos Lucide
+            lucide.createIcons();
         })
         .catch(error => {
             console.error("Error al listar regiones:", error);
@@ -106,13 +99,12 @@ function listarRegiones() {
         });
 }
 
-// Función para cargar los países en el select (dropdown) para el formulario de Región
 function cargarPaises() {
-    return fetch("/Region/GetPaises") // URL para obtener los países
+    return fetch("/Region/GetPaises")
         .then(res => res.json())
         .then(data => {
             const selectPais = document.getElementById("selectPais");
-            selectPais.innerHTML = "<option value=''>-- Seleccione País --</option>"; // Opción por defecto
+            selectPais.innerHTML = "<option value=''>-- Seleccione País --</option>";
             data.forEach(p => {
                 const option = document.createElement("option");
                 option.value = p.PaisID;
@@ -127,13 +119,12 @@ function cargarPaises() {
         });
 }
 
-// Función para guardar o actualizar una región
 function guardarRegion() {
     const region = {
         RegionID: parseInt(document.getElementById("txtRegionID").value),
         Nombre: document.getElementById("txtNombre").value.trim(),
-        TipoRegion: document.getElementById("txtTipoRegion").value.trim(), // Campo TipoRegion
-        PaisID: parseInt(document.getElementById("selectPais").value) // Campo PaisID
+        TipoRegion: document.getElementById("txtTipoRegion").value.trim(),
+        PaisID: parseInt(document.getElementById("selectPais").value)
     };
 
     if (region.Nombre === "") {
@@ -149,7 +140,7 @@ function guardarRegion() {
         return;
     }
 
-    fetch("/Region/Guardar", { // Cambiada la URL al controlador de Region
+    fetch("/Region/Guardar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(region)
@@ -176,21 +167,21 @@ function guardarRegion() {
 }
 
 function editarRegion(id) {
-    cargarPaises().then(() => { // Asegúrate de cargar los países primero
-        fetch(`/Region/Buscar?id=${id}`) // Cambiada la URL al controlador de Region
+    cargarPaises().then(() => {
+        fetch(`/Region/Buscar?id=${id}`)
             .then(res => {
                 if (!res.ok) {
                     return res.json().then(err => { throw new Error(err.message || "Error al buscar la región para edición."); });
                 }
                 return res.json();
             })
-            .then(r => { // Usamos 'r' para región
+            .then(r => {
                 document.getElementById("tituloModal").innerText = "Editar Región";
                 document.getElementById("txtRegionID").value = r.RegionID;
                 document.getElementById("txtNombre").value = r.Nombre;
-                document.getElementById("txtTipoRegion").value = r.TipoRegion; // Cargar TipoRegion
-                document.getElementById("selectPais").value = r.PaisID; // Seleccionar el país
-                mostrarModal(); // Mostrar modal con animación
+                document.getElementById("txtTipoRegion").value = r.TipoRegion;
+                document.getElementById("selectPais").value = r.PaisID;
+                mostrarModal();
             })
             .catch(error => {
                 console.error("Error al cargar región para edición:", error);
@@ -204,7 +195,7 @@ function eliminarRegion(id) {
         return;
     }
 
-    fetch(`/Region/Eliminar?id=${id}`, { method: "POST" }) // Cambiada la URL al controlador de Region
+    fetch(`/Region/Eliminar?id=${id}`, { method: "POST" })
         .then(res => {
             if (!res.ok) {
                 return res.json().then(err => { throw new Error(err.message || "Error al eliminar la región."); });

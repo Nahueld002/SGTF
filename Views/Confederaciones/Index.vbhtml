@@ -1,4 +1,4 @@
-﻿@Code
+﻿﻿@Code
     ViewData("Title") = "Confederaciones"
 End Code
 

@@ -25,13 +25,10 @@ End Code
 </div>
 
 <div id="modalPais" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-    ' ID del modal cambiado a "modalPais"
     <div id="modalPaisContent" class="bg-gray-800 w-full max-w-md rounded-lg shadow-lg p-8 transform transition-all scale-95 opacity-0">
-        ' ID del contenido del modal cambiado
-        <h2 class="text-2xl font-bold mb-6 text-white" id="tituloModal">Crear País</h2> ' Título del modal cambiado a "Crear País"
+        <h2 class="text-2xl font-bold mb-6 text-white" id="tituloModal">Crear País</h2>
         <form id="formPais">
-            ' ID del formulario cambiado a "formPais"
-            <input type="hidden" id="txtPaisID" /> ' ID del input oculto cambiado a "txtPaisID"
+            <input type="hidden" id="txtPaisID" />
 
             <div class="mb-6">
                 <label for="txtNombre" class="block text-sm font-medium text-gray-300 mb-2">Nombre</label>
@@ -39,12 +36,12 @@ End Code
             </div>
 
             <div class="mb-6">
-                <label for="txtCodigoFIFA" class="block text-sm font-medium text-gray-300 mb-2">Código FIFA</label> ' Nuevo campo para Código FIFA
+                <label for="txtCodigoFIFA" class="block text-sm font-medium text-gray-300 mb-2">Código FIFA</label>
                 <input type="text" id="txtCodigoFIFA" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500" />
             </div>
 
             <div class="mb-6">
-                <label for="selectConfederacion" class="block text-sm font-medium text-gray-300 mb-2">Confederación</label> ' Nuevo campo select para Confederación
+                <label for="selectConfederacion" class="block text-sm font-medium text-gray-300 mb-2">Confederación</label>
                 <select id="selectConfederacion" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
                 </select>
             </div>

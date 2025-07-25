@@ -15,16 +15,6 @@ Namespace Controllers
             Return View()
         End Function
 
-        ' GET: Confederaciones/Listar
-        Function Listar() As JsonResult
-            ' Solo seleccionamos las propiedades existentes en tu modelo
-            Dim confederaciones = db.Confederacion.Select(Function(c) New With {
-                .ConfederacionID = c.ConfederacionID,
-                .Nombre = c.Nombre
-            }).ToList()
-            Return Json(New With {.data = confederaciones}, JsonRequestBehavior.AllowGet)
-        End Function
-
         ' POST: Confederaciones/Guardar
         <HttpPost()>
         Function Guardar(confederacion As Confederacion) As JsonResult
@@ -50,19 +40,47 @@ Namespace Controllers
             End Try
         End Function
 
-        ' GET: Confederaciones/Buscar/5
-        Function Buscar(id As Integer) As JsonResult
-            ' Solo seleccionamos las propiedades existentes en tu modelo
-            Dim confederacion = db.Confederacion.Where(Function(c) c.ConfederacionID = id).Select(Function(c) New With {
+        ' SGTF.Controllers.ConfederacionesController
+        Function Listar() As JsonResult
+            Dim confs = db.Confederacion _
+        .Select(Function(c) New With {
+            .ConfederacionID = c.ConfederacionID,
+            .Nombre = c.Nombre
+        }).ToList()
+
+            Return Json(New With {.success = True, .data = confs},
+                JsonRequestBehavior.AllowGet)
+        End Function
+
+        Function Buscar(id As Integer) As ActionResult
+            Try
+                db.Configuration.LazyLoadingEnabled = False
+                db.Configuration.ProxyCreationEnabled = False
+
+                Dim dto = db.Confederacion.AsNoTracking() _
+            .Where(Function(c) c.ConfederacionID = id) _
+            .Select(Function(c) New With {
+                .success = True,
                 .ConfederacionID = c.ConfederacionID,
                 .Nombre = c.Nombre
             }).FirstOrDefault()
 
-            If confederacion Is Nothing Then
-                Return Json(New With {.success = False, .message = "Confederación no encontrada."}, JsonRequestBehavior.AllowGet)
-            End If
-            Return Json(confederacion, JsonRequestBehavior.AllowGet)
+                If dto Is Nothing Then
+                    Response.StatusCode = 404
+                    Return Json(New With {.success = False, .message = "Confederación no encontrada."},
+                        JsonRequestBehavior.AllowGet)
+                End If
+
+                Return Json(dto, JsonRequestBehavior.AllowGet)
+
+            Catch ex As Exception
+                System.Diagnostics.Debug.WriteLine($"Error Buscar Confederación: {ex}")
+                Response.StatusCode = 500
+                Return Json(New With {.success = False, .message = ex.Message},
+                    JsonRequestBehavior.AllowGet)
+            End Try
         End Function
+
 
         ' POST: Confederaciones/Eliminar/5
         <HttpPost()>
