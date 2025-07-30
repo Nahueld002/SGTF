@@ -1,4 +1,4 @@
-﻿﻿@Code
+﻿@Code
     ViewData("Title") = "Confederaciones"
 End Code
 
@@ -9,7 +9,6 @@ End Code
     </button>
 </div>
 
-<!-- Tabla de Confederaciones -->
 <div class="card p-4 rounded-lg overflow-x-auto">
     <table id="tablaConfederaciones" class="w-full text-left">
         <thead class="table-header">
@@ -19,12 +18,10 @@ End Code
             </tr>
         </thead>
         <tbody>
-            <!-- Cargado por JS -->
         </tbody>
     </table>
 </div>
 
-<!-- Modal de Confederación -->
 <div id="modalConfederacion" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
     <div id="modalConfederacionContent" class="bg-gray-800 w-full max-w-md rounded-lg shadow-lg p-8 transform transition-all scale-95 opacity-0">
         <h2 class="text-2xl font-bold mb-6 text-white" id="tituloModal">Crear Confederación</h2>
@@ -77,7 +74,6 @@ End Code
         opacity: 1;
     }
 </style>
-
 
 @section Scripts
     <script src="~/Scripts/jquery-3.7.1.min.js"></script>

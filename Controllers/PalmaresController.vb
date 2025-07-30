@@ -10,13 +10,10 @@ Namespace Controllers
 
         Private db As New FutbolDB2Entities()
 
-        ' GET: Palmares
         Function Index() As ActionResult
             Return View()
         End Function
 
-        ' GET: Palmares/Listar
-        ' Returns a JSON list of all palmares, including associated Equipo and Torneo names.
         Function Listar() As JsonResult
             Try
                 Dim palmaresList = db.Palmares.Include("Equipo").Include("Torneo").Select(Function(p) New With {
@@ -26,7 +23,7 @@ Namespace Controllers
                     .TorneoID = p.TorneoID,
                     .NombreEquipo = If(p.Equipo IsNot Nothing, p.Equipo.Nombre, "N/A"),
                     .NombreTorneo = If(p.Torneo IsNot Nothing, p.Torneo.Nombre, "N/A")
-                }).OrderBy(Function(p) p.AñoTitulo).ToList() ' Added OrderBy for consistency
+                }).OrderBy(Function(p) p.AñoTitulo).ToList()
 
                 Return Json(New With {.data = palmaresList}, JsonRequestBehavior.AllowGet)
             Catch ex As Exception
@@ -35,8 +32,6 @@ Namespace Controllers
             End Try
         End Function
 
-        ' GET: Palmares/GetTotalTitulos
-        ' Returns a JSON list of total titles per team.
         Function GetTotalTitulos() As JsonResult
             Try
                 Dim totalTitulos = (From p In db.Palmares

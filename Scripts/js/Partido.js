@@ -1,8 +1,7 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
     ListarPartidos();
-    cargarComboBoxes(); // Cargar los comboboxes al iniciar
+    cargarComboBoxes();
 
-    // Filtros dinámicos
     document.getElementById('filter-torneo').addEventListener('input', e => {
         filtros.torneo = e.target.value.toLowerCase();
         ListarPartidos();
@@ -45,7 +44,6 @@ function crearListadoPartidos(data) {
         if (partido.Estado === 'Finalizado') estadoClase = 'bg-green-500/20 text-green-400';
         else if (partido.Estado === 'Suspendido') estadoClase = 'bg-red-500/20 text-red-400';
 
-        // Display Grupo only if it has a value
         const grupoDisplay = partido.Grupo ? ` (${partido.Grupo})` : '';
 
         contenido += `
@@ -108,8 +106,8 @@ function cargarComboBoxes() {
 }
 
 function AbrirModal() {
-    Limpiar(); // Limpia el formulario
-    cargarComboBoxes(); // Carga torneos y equipos
+    Limpiar();
+    cargarComboBoxes();
 
     document.getElementById('modal-title').textContent = 'Nuevo Partido';
     document.getElementById('modalPartido').classList.remove('hidden');
@@ -120,17 +118,15 @@ function AbrirModal() {
     }, 10);
 }
 
-
 function CerrarModal() {
     document.getElementById('modalPartidoContent').classList.add('scale-95', 'opacity-0');
     document.getElementById('modalPartidoContent').classList.remove('scale-100', 'opacity-100');
 
     setTimeout(() => {
         document.getElementById('modalPartido').classList.add('hidden');
-        Limpiar(); // opcional
+        Limpiar();
     }, 200);
 }
-
 
 function Guardar() {
     const local = document.getElementById('txtLocalID').value;
@@ -152,12 +148,8 @@ function Guardar() {
     frm.append('AñoParticipacion', document.getElementById('txtAnio').value);
     frm.append('Fase', document.getElementById('txtFase').value);
 
-    // --- IMPORTANT CHANGE FOR GRUPO ---
     const grupoValue = document.getElementById('txtGrupo').value;
-    frm.append('Grupo', grupoValue === '' ? '' : grupoValue); // Send empty string for null
-    // You could also send null explicitly: frm.append('Grupo', grupoValue === '' ? null : grupoValue);
-    // However, sending an empty string is often easier to handle with default model binding,
-    // and your VB.NET controller already converts "" to Nothing.
+    frm.append('Grupo', grupoValue === '' ? '' : grupoValue);
 
     frm.append('Estado', document.getElementById('txtEstado').value);
 
@@ -182,7 +174,6 @@ function Guardar() {
     });
 }
 
-
 function ConfirmarEliminar(id) {
     if (confirm('¿Eliminar este partido?')) {
         Eliminar(id);
@@ -206,24 +197,23 @@ function Eliminar(id) {
         }
     });
 }
+
 function llenarCombo(id, data, selectedId, keyId) {
     const select = document.getElementById(id);
     if (!select) return;
 
-    // Clear existing options, but keep the initial "Seleccionar..." for some combos
-    // For txtGrupo, we want the "N/A or Seleccionar Grupo..." option
     let defaultOptionText = 'Seleccionar...';
     if (id === 'txtGrupo') {
         defaultOptionText = 'N/A o Seleccionar Grupo...';
     }
 
-    select.innerHTML = `<option value="">${defaultOptionText}</option>`; // Keep default "empty" option
+    select.innerHTML = `<option value="">${defaultOptionText}</option>`;
 
     data.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item[keyId];
         opt.textContent = item.Nombre;
-        if (selectedId !== null && opt.value == selectedId) { // Check for null explicitly
+        if (selectedId !== null && opt.value == selectedId) {
             opt.selected = true;
         }
         select.appendChild(opt);
@@ -248,7 +238,7 @@ function AbrirEditar(id) {
             document.getElementById('txtFechaNro').value = p.NroFecha ?? '';
             document.getElementById('txtAnio').value = p.AñoParticipacion ?? '';
             document.getElementById('txtFase').value = p.Fase || '';
-            document.getElementById('txtGrupo').value = p.Grupo || ''; // Use || '' to ensure an empty string if null
+            document.getElementById('txtGrupo').value = p.Grupo || '';
             document.getElementById('txtEstado').value = p.Estado || '';
 
             document.getElementById('modal-title').textContent = 'Editar Partido';
@@ -265,7 +255,6 @@ function AbrirEditar(id) {
 function Limpiar() {
     document.getElementById('formPartido').reset();
     document.getElementById('txtPartidoID').value = '';
-    // Ensure Group is reset to the empty option
     document.getElementById('txtGrupo').value = '';
 }
 

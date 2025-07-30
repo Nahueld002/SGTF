@@ -1,5 +1,4 @@
-﻿// Variable global para filtros
-const filtrosEquipos = {
+﻿const filtrosEquipos = {
     nombre: '',
     codigo: '',
     tipo: '',
@@ -9,13 +8,11 @@ const filtrosEquipos = {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Usar jQuery para asegurar que el DOM esté completamente cargado
     $(document).ready(function () {
         listarEquipos();
-        cargarRegionesEnFiltro(); // Carga las regiones para el filtro
-        cargarRegionesParaFormulario(); // Carga las regiones para el formulario del modal
+        cargarRegionesEnFiltro();
+        cargarRegionesParaFormulario();
 
-        // Event listeners para los filtros
         document.getElementById('filter-nombreEquipo').addEventListener('input', () => listarEquipos());
         document.getElementById('filter-codigoEquipo').addEventListener('input', () => listarEquipos());
         document.getElementById('filter-tipoEquipo').addEventListener('change', () => listarEquipos());
@@ -23,25 +20,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
         document.getElementById('filter-regionEquipo').addEventListener('change', function () {
             const regionID = this.value;
-            cargarCiudadesEnFiltro(regionID); // Carga las ciudades para el filtro
+            cargarCiudadesEnFiltro(regionID);
             listarEquipos();
         });
 
         document.getElementById('filter-ciudadEquipo').addEventListener('change', () => listarEquipos());
 
-        // Event listener para el botón "Crear Equipo"
         const btnAbrirModalNuevo = document.getElementById('btnAbrirModalNuevoEquipo');
         if (btnAbrirModalNuevo) {
             btnAbrirModalNuevo.addEventListener('click', abrirModalNuevo);
         }
 
-        // Listener para el select de regiones en el formulario del modal
+        document.getElementById("formEquipo").addEventListener("submit", function (event) {
+            event.preventDefault();
+            guardarEquipo();
+        });
+
         document.getElementById("selectRegion").addEventListener("change", function () {
             const regionID = this.value;
             cargarCiudades(regionID);
         });
 
-        // Listeners para cerrar modal al clickear fuera o con ESC
         document.addEventListener('click', function (event) {
             const modal = document.getElementById('modalEquipo');
             const modalContent = document.getElementById('modalEquipoContent');
@@ -73,14 +72,14 @@ function abrirModalNuevo() {
     document.getElementById("selectTipoEquipo").value = "";
     document.getElementById("selectEstado").value = "Activo";
 
-    cargarRegionesParaFormulario(); // Asegura que las regiones se carguen cada vez que se abre el modal
+    cargarRegionesParaFormulario();
     mostrarModal();
 }
 
 function cerrarModal() {
     ocultarModal();
     document.getElementById("formEquipo").reset();
-    document.getElementById("selectCiudad").innerHTML = "<option value=''>-- Seleccione Ciudad --</option>"; // Resetear ciudades
+    document.getElementById("selectCiudad").innerHTML = "<option value=''>-- Seleccione Ciudad --</option>";
 }
 
 function mostrarModal() {
@@ -105,8 +104,6 @@ function ocultarModal() {
     }, 200);
 }
 
-// ... (inside equipo.js)
-
 function listarEquipos() {
     const nombre = document.getElementById('filter-nombreEquipo').value.trim();
     const codigo = document.getElementById('filter-codigoEquipo').value.trim();
@@ -115,7 +112,6 @@ function listarEquipos() {
     const regionId = document.getElementById('filter-regionEquipo').value;
     const ciudadId = document.getElementById('filter-ciudadEquipo').value;
 
-    // Build query parameters
     const queryParams = new URLSearchParams();
     if (nombre) queryParams.append('nombre', nombre);
     if (codigo) queryParams.append('codigo', codigo);
@@ -124,10 +120,10 @@ function listarEquipos() {
     if (regionId) queryParams.append('regionId', regionId);
     if (ciudadId) queryParams.append('ciudadId', ciudadId);
 
-    fetch(`/Equipos/Listar?${queryParams.toString()}`) // Send filters as query parameters
+    fetch(`/Equipos/Listar?${queryParams.toString()}`)
         .then(res => res.json())
         .then(response => {
-            if (response.success) { // Check for the success flag
+            if (response.success) {
                 const equipos = response.data && Array.isArray(response.data) ? response.data : [];
                 crearListadoEquipos(equipos);
             } else {
@@ -147,15 +143,13 @@ function listarEquipos() {
         });
 }
 
-// ... rest of your equipo.js functions
-
 function crearListadoEquipos(data) {
     const tablaBody = document.querySelector("#tablaEquipos tbody");
     if (!tablaBody) {
         console.error("Error: Elemento <tbody> con ID #tablaEquipos tbody no encontrado.");
         return;
     }
-    tablaBody.innerHTML = ""; // Limpia la tabla antes de añadir nuevos datos
+    tablaBody.innerHTML = "";
     let filaPar = true;
 
     if (data && Array.isArray(data) && data.length > 0) {
@@ -165,14 +159,14 @@ function crearListadoEquipos(data) {
 
             const row = `
                 <tr class="${claseFila} hover:bg-gray-600/50 transition-colors">
-                    <td class="p-4 font-medium **text-white**">${e.Nombre || ''}</td>
-                    <td class="p-4 **text-white**">${e.CodigoEquipo || ''}</td>
-                    <td class="p-4 **text-white**">${e.NombreRegion || 'N/A'}</td>
-                    <td class="p-4 **text-white**">${e.NombreCiudad || 'N/A'}</td>
-                    <td class="p-4 text-center **text-white**">${e.AñoFundacion || 'N/A'}</td>
-                    <td class="p-4 text-center **text-white**">${e.ELO !== null ? e.ELO.toFixed(2) : 'N/A'}</td>
-                    <td class="p-4 **text-white**">${e.TipoEquipo || ''}</td>
-                    <td class="p-4 **text-white**">${e.Estado || ''}</td>
+                    <td class="p-4 font-medium text-white">${e.Nombre || ''}</td>
+                    <td class="p-4 text-white">${e.CodigoEquipo || ''}</td>
+                    <td class="p-4 text-white">${e.NombreRegion || 'N/A'}</td>
+                    <td class="p-4 text-white">${e.NombreCiudad || 'N/A'}</td>
+                    <td class="p-4 text-center text-white">${e.AñoFundacion || 'N/A'}</td>
+                    <td class="p-4 text-center text-white">${e.ELO !== null ? e.ELO.toFixed(2) : 'N/A'}</td>
+                    <td class="p-4 text-white">${e.TipoEquipo || ''}</td>
+                    <td class="p-4 text-white">${e.Estado || ''}</td>
                     <td class="p-4 text-center">
                         <div class="flex justify-center gap-2">
                             <button class="p-2 rounded-md hover:bg-gray-600" title="Editar" onclick="editarEquipo(${e.EquipoID})">
@@ -195,7 +189,6 @@ function crearListadoEquipos(data) {
     }
 }
 
-// Carga las regiones para el select de filtro
 function cargarRegionesEnFiltro() {
     return fetch("/Equipos/GetRegiones")
         .then(res => res.json())
@@ -216,7 +209,6 @@ function cargarRegionesEnFiltro() {
         });
 }
 
-// Carga las ciudades para el select de filtro
 function cargarCiudadesEnFiltro(regionId) {
     const selectCiudadFiltro = document.getElementById("filter-ciudadEquipo");
     selectCiudadFiltro.innerHTML = "<option value=''>Todas las Ciudades</option>";
@@ -242,7 +234,6 @@ function cargarCiudadesEnFiltro(regionId) {
         });
 }
 
-// Carga las regiones para el select del formulario (modal)
 function cargarRegionesParaFormulario() {
     return fetch("/Equipos/GetRegiones")
         .then(res => res.json())
@@ -263,7 +254,6 @@ function cargarRegionesParaFormulario() {
         });
 }
 
-// Carga las ciudades para el select del formulario (modal)
 function cargarCiudades(regionId) {
     const selectCiudad = document.getElementById("selectCiudad");
     selectCiudad.innerHTML = "<option value=''>-- Seleccione Ciudad --</option>";
@@ -353,9 +343,8 @@ function guardarEquipo() {
         });
 }
 
-// Hacer las funciones de edición y eliminación globales para que sean accesibles desde el HTML
 window.editarEquipo = function (id) {
-    cargarRegionesParaFormulario() // Asegura que las regiones del formulario estén cargadas
+    cargarRegionesParaFormulario()
         .then(() => {
             fetch(`/Equipos/Buscar?id=${id}`)
                 .then(res => {
@@ -375,7 +364,6 @@ window.editarEquipo = function (id) {
                     document.getElementById("txtCodigoEquipo").value = e.CodigoEquipo;
                     document.getElementById("selectRegion").value = e.RegionID || "";
 
-                    // Cargar ciudades del equipo y luego establecer el valor
                     return cargarCiudades(e.RegionID).then(() => {
                         document.getElementById("selectCiudad").value = e.CiudadID || "";
                         document.getElementById("txtAnoFundacion").value = e.AñoFundacion || "";

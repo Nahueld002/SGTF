@@ -140,7 +140,6 @@ End Code
 </div>
 
 <style>
-    /* Estilos para autocomplete */
     .autocomplete-item {
         border-bottom: 1px solid rgba(75, 85, 99, 0.5);
         transition: background-color 0.2s ease;
@@ -154,7 +153,6 @@ End Code
             background-color: rgba(75, 85, 99, 0.7);
         }
 
-    /* Estilos para el modal */
     .modal-backdrop {
         backdrop-filter: blur(4px);
     }
@@ -208,19 +206,12 @@ End Code
     <script src="~/scripts/jquery-3.7.1.min.js"></script>
     <script src="~/scripts/js/Torneo.js"></script>
     <script>
-        // These global functions were likely meant for the HTML,
-        // but it's better to keep the main Listar/filter logic in Torneo.js.
-        // If AbrirModal or CerrarModal are *only* called from HTML attributes,
-        // they need to be globally accessible, so we make them window properties.
-
         window.AbrirModal = function (torneoID = 0) {
-            // Reiniciar formulario y título para nuevo torneo
-            Limpiar(); // Llamar a la función Limpiar para resetear el formulario
-            cargarComboBoxesJerarquicos(); // Recargar los comboboxes jerárquicos
+            Limpiar();
+            cargarComboBoxesJerarquicos();
 
             if (torneoID > 0) {
-                // Si está editando, poblar el formulario con datos existentes
-                Recuperar(torneoID); // Esta función debería poblar los campos del formulario
+                Recuperar(torneoID);
                 $('#modal-title').text('Editar Torneo');
             } else {
                 $('#modal-title').text('Nuevo Torneo');
@@ -234,10 +225,9 @@ End Code
             $('#modalTorneoContent').removeClass('opacity-100 scale-100').addClass('opacity-0 scale-95');
             setTimeout(() => {
                 $('#modalTorneo').addClass('hidden');
-            }, 300); // Permite tiempo para la transición
+            }, 300);
         };
 
-        // Función para redirigir a la tabla de posiciones
         window.VerTablaPosiciones = function (torneoID, nombre) {
             const encodedNombre = encodeURIComponent(nombre);
             window.location.href = `/Torneo/TablaPosiciones?torneoID=${torneoID}&torneoNombre=${encodedNombre}`;

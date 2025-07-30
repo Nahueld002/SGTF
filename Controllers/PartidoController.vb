@@ -1,40 +1,42 @@
 ﻿Imports System.Web.Mvc
+Imports SGTF.Models
+Imports System.Linq
+Imports System.Data.Entity
+
 Namespace Controllers
     Public Class PartidoController
         Inherits Controller
         Dim db As FutbolDB2Entities = New FutbolDB2Entities()
 
-        ' GET: Torneo
         Function Index() As ActionResult
             Return View()
         End Function
+
         Function ListarPartido() As JsonResult
-            Dim listado = (From p In db.Partido.AsEnumerable()  ' Forzamos la ejecución en memoria
+            Dim listado = (From p In db.Partido.AsEnumerable()
                            Let torneo = p.Torneo
                            Let localEquipo = If(p.TorneoEquipo IsNot Nothing AndAlso p.TorneoEquipo.Equipo IsNot Nothing, p.TorneoEquipo.Equipo, Nothing)
                            Let visitanteEquipo = If(p.TorneoEquipo1 IsNot Nothing AndAlso p.TorneoEquipo1.Equipo IsNot Nothing, p.TorneoEquipo1.Equipo, Nothing)
                            Select New With {
-                       .PartidoID = p.PartidoID,
-                       .Torneo = torneo?.Nombre,
-                       .Fecha = p.NroFecha,
-                       .Año = p.AñoParticipacion,
-                       .Fase = p.Fase,
-                       .Grupo = p.Grupo,
-                       .Estado = p.Estado,
-                       .Local = If(localEquipo IsNot Nothing, localEquipo.Nombre, "Equipo Local"),
-                       .Visitante = If(visitanteEquipo IsNot Nothing, visitanteEquipo.Nombre, "Equipo Visitante"),
-                       .Marcador = p.GolesLocal.ToString() & " - " & p.GolesVisitante.ToString()
-                   }).ToList()
+                           .PartidoID = p.PartidoID,
+                           .Torneo = torneo?.Nombre,
+                           .Fecha = p.NroFecha,
+                           .Año = p.AñoParticipacion,
+                           .Fase = p.Fase,
+                           .Grupo = p.Grupo,
+                           .Estado = p.Estado,
+                           .Local = If(localEquipo IsNot Nothing, localEquipo.Nombre, "Equipo Local"),
+                           .Visitante = If(visitanteEquipo IsNot Nothing, visitanteEquipo.Nombre, "Equipo Visitante"),
+                           .Marcador = p.GolesLocal.ToString() & " - " & p.GolesVisitante.ToString()
+                           }).ToList()
 
             Return Json(listado, JsonRequestBehavior.AllowGet)
         End Function
-
 
         Function Guardar(objPartido As Partido) As Integer
             Dim respuesta As Integer
             Try
                 If objPartido.PartidoID = 0 Then
-                    ' Para nuevos registros, manejar cadena vacía a Nothing (null)
                     If String.IsNullOrEmpty(objPartido.Grupo) Then
                         objPartido.Grupo = Nothing
                     End If
@@ -62,30 +64,24 @@ Namespace Controllers
 
                         registro.Estado = objPartido.Estado
                     Else
-                        ' Manejar el caso donde el registro no se encuentra para actualizar
                         respuesta = 0
                         Return respuesta
                     End If
                 End If
 
-                db.SaveChanges() ' Guarda los cambios del partido primero
+                db.SaveChanges()
 
-                ' IMPORTANTE: Llama al stored procedure para actualizar TablaPosiciones
-                ' SOLO si el partido está marcado como 'Jugado' o 'Finalizado'.
-                ' Asegúrate de que el estado que usas en tu aplicación ('Jugado' o 'Finalizado')
-                ' coincida con lo que el stored procedure 'ActualizarTablaPosiciones' espera.
                 If objPartido.Estado = "Finalizado" OrElse objPartido.Estado = "Finalizado" Then
                     db.Database.ExecuteSqlCommand("EXEC ActualizarTablaPosiciones")
                 End If
 
-                respuesta = 1 ' Indicar éxito
+                respuesta = 1
             Catch ex As Exception
-                ' Registra la excepción para depuración (ej. ex.Message, ex.StackTrace)
-                ' Console.WriteLine("Error al guardar partido: " & ex.Message)
-                respuesta = 0 ' Indicar fallo
+                respuesta = 0
             End Try
             Return respuesta
         End Function
+
         Function Eliminar(id As Integer) As Integer
             Dim respuesta As Integer
             Try
@@ -105,18 +101,18 @@ Namespace Controllers
             Dim partido = From p In db.Partido
                           Where p.PartidoID = id
                           Select New With {
-                      p.PartidoID,
-                      p.TorneoID,
-                      p.EquipoLocalTorneoEquipoID,
-                      p.EquipoVisitanteTorneoEquipoID,
-                      p.GolesLocal,
-                      p.GolesVisitante,
-                      p.NroFecha,
-                      p.AñoParticipacion,
-                      p.Fase,
-                      p.Grupo,
-                      p.Estado
-                  }
+                          p.PartidoID,
+                          p.TorneoID,
+                          p.EquipoLocalTorneoEquipoID,
+                          p.EquipoVisitanteTorneoEquipoID,
+                          p.GolesLocal,
+                          p.GolesVisitante,
+                          p.NroFecha,
+                          p.AñoParticipacion,
+                          p.Fase,
+                          p.Grupo,
+                          p.Estado
+                          }
             Return New JsonResult With {.Data = partido, .JsonRequestBehavior = JsonRequestBehavior.AllowGet}
         End Function
 
@@ -125,34 +121,36 @@ Namespace Controllers
                 Dim torneos = From t In db.Torneo
                               Order By t.Nombre
                               Select New With {
-                          t.TorneoID,
-                          t.Nombre
-                      }
+                              t.TorneoID,
+                              t.Nombre
+                              }
                 Return New JsonResult With {.Data = torneos.ToList(), .JsonRequestBehavior = JsonRequestBehavior.AllowGet}
             Catch ex As Exception
                 Return New JsonResult With {.Data = New List(Of Object)(), .JsonRequestBehavior = JsonRequestBehavior.AllowGet}
             End Try
         End Function
+
         Function CargarTorneoEquipos() As JsonResult
             Try
                 Dim equipos = From te In db.TorneoEquipo
                               Where te.Equipo IsNot Nothing
                               Order By te.Equipo.Nombre
                               Select New With {
-                          te.TorneoEquipoID,
-                          .Nombre = te.Equipo.Nombre & " (" & te.AñoParticipacion & ")"
-                      }
+                              te.TorneoEquipoID,
+                              .Nombre = te.Equipo.Nombre & " (" & te.AñoParticipacion & ")"
+                              }
                 Return New JsonResult With {.Data = equipos.ToList(), .JsonRequestBehavior = JsonRequestBehavior.AllowGet}
             Catch ex As Exception
                 Return New JsonResult With {.Data = New List(Of Object)(), .JsonRequestBehavior = JsonRequestBehavior.AllowGet}
             End Try
         End Function
+
         Function CargarFases() As JsonResult
             Dim fases = New List(Of Object) From {
-        New With {.Clave = "Grupos", .Nombre = "Fase de Grupos"},
-        New With {.Clave = "Semifinal", .Nombre = "Semifinal"},
-        New With {.Clave = "Final", .Nombre = "Final"}
-    }
+                New With {.Clave = "Grupos", .Nombre = "Fase de Grupos"},
+                New With {.Clave = "Semifinal", .Nombre = "Semifinal"},
+                New With {.Clave = "Final", .Nombre = "Final"}
+            }
             Return New JsonResult With {.Data = fases, .JsonRequestBehavior = JsonRequestBehavior.AllowGet}
         End Function
     End Class

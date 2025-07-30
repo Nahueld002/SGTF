@@ -1,13 +1,10 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    //listarPalmares(); // For individual titles
-    listarTotalTitulos(); // For total titles per team
-    // Call other functions here as you implement them for other statistics
+    //listarPalmares(); // Para detalles por título
+    listarTotalTitulos(); // Para la suma total de títulos
     // listarDetalleTorneosResultados();
     // listarDesgloseTitulosPorTorneo();
     // listarTotalSubcampeonatos();
 });
-
-// Function to load and display individual Palmares entries
 function listarPalmares() {
     fetch("/Palmares/Listar")
         .then(res => {
@@ -20,7 +17,7 @@ function listarPalmares() {
         })
         .then(data => {
             const tablaBody = document.querySelector("#tablaPalmares tbody");
-            tablaBody.innerHTML = ""; // Clear existing rows
+            tablaBody.innerHTML = "";
 
             if (data.error) {
                 alert(data.error);
@@ -75,8 +72,6 @@ function listarPalmares() {
             alert("Error al cargar los palmares individuales: " + error.message);
         });
 }
-
-// Function to load and display total titles per team
 function listarTotalTitulos() {
     fetch("/Palmares/GetTotalTitulos")
         .then(res => {
@@ -88,8 +83,8 @@ function listarTotalTitulos() {
             return res.json();
         })
         .then(data => {
-            const tablaBody = document.querySelector("#tablaTotalTitulos tbody"); // Targeting a new table body
-            tablaBody.innerHTML = ""; // Clear existing rows
+            const tablaBody = document.querySelector("#tablaTotalTitulos tbody"); 
+            tablaBody.innerHTML = "";
 
             if (data.error) {
                 alert(data.error);
@@ -135,13 +130,12 @@ function listarTotalTitulos() {
         });
 }
 
-// Placeholder functions for future statistics:
+// Futuras funciones a utilizar
 /*
 function listarDetalleTorneosResultados() {
     fetch("/Palmares/GetDetalleTorneosResultados")
         .then(res => res.json())
         .then(data => {
-            // Logic to populate #tablaDetalleTorneos tbody
             // ...
         })
         .catch(error => console.error("Error al cargar detalle de torneos:", error));
@@ -151,7 +145,6 @@ function listarDesgloseTitulosPorTorneo() {
     fetch("/Palmares/GetDesgloseTitulosPorTorneo")
         .then(res => res.json())
         .then(data => {
-            // Logic to populate #tablaDesgloseTitulos tbody
             // ...
         })
         .catch(error => console.error("Error al cargar desglose de títulos:", error));
@@ -161,7 +154,6 @@ function listarTotalSubcampeonatos() {
     fetch("/Palmares/GetTotalSubcampeonatos")
         .then(res => res.json())
         .then(data => {
-            // Logic to populate #tablaSubcampeonatos tbody
             // ...
         })
         .catch(error => console.error("Error al cargar subcampeonatos:", error));

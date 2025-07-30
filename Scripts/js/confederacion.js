@@ -1,9 +1,4 @@
-﻿/*******************************
- *  Scripts/js/confederacion.js
- *******************************/
-
-// Estado inicial
-document.addEventListener("DOMContentLoaded", () => {
+﻿document.addEventListener("DOMContentLoaded", () => {
     listarConfederaciones();
 
     document.getElementById("formConfederacion")
@@ -13,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 });
 
-/* ---------- Helpers de modal ---------- */
 function mostrarModal() {
     const modal = document.getElementById("modalConfederacion");
     const content = document.getElementById("modalConfederacionContent");
@@ -38,7 +32,6 @@ function ocultarModal() {
     }, 200);
 }
 
-/* ---------- CRUD ---------- */
 function abrirModalNuevo() {
     document.getElementById("tituloModal").innerText = "Crear Confederación";
     document.getElementById("txtConfederacionID").value = "0";
@@ -59,7 +52,7 @@ function listarConfederaciones() {
             data.forEach(c => {
                 tbody.insertAdjacentHTML("beforeend", `
                     <tr class="${par ? "table-row-even" : "table-row-odd"}
-                               hover:bg-gray-600/50 transition-colors">
+                                hover:bg-gray-600/50 transition-colors">
                         <td class="p-4 font-medium">${c.Nombre}</td>
                         <td class="p-4 text-center">
                             <div class="flex justify-center gap-2">
@@ -146,7 +139,6 @@ function eliminarConfederacion(id) {
         });
 }
 
-/* ---------- Cerrar modal al fondo o con ESC ---------- */
 document.addEventListener("click", e => {
     const modal = document.getElementById("modalConfederacion");
     const content = document.getElementById("modalConfederacionContent");
@@ -156,4 +148,4 @@ document.addEventListener("keydown", e => {
     if (e.key === "Escape" &&
         !document.getElementById("modalConfederacion").classList.contains("hidden"))
         ocultarModal();
-}); 
+});

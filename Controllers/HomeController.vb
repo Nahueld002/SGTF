@@ -46,7 +46,6 @@ Namespace Controllers
 
         Function EstadisticaDestacada() As JsonResult
             Try
-                ' Crear lista de participaciones por equipo
                 Dim participaciones = (From p In db.Partido.AsEnumerable()
                                        Where p.Estado = "Finalizado"
                                        Select New With {
@@ -66,7 +65,6 @@ Namespace Controllers
                                    .EsGanador = p.GolesVisitante > p.GolesLocal
                                }).ToList()
 
-                ' Agrupar por equipo
                 Dim agrupado = (From x In participaciones
                                 Group x By x.EquipoID, x.Nombre Into Grupo = Group
                                 Let Partidos = Grupo.Count()

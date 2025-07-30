@@ -2,9 +2,9 @@
 Imports System.Web.Mvc
 Imports SGTF.Models
 Imports System.Data.Entity
-Imports System.Linq ' Added for LINQ queries like Any() and AsQueryable()
-Imports System.Data.Entity.Validation ' Added for DbEntityValidationException
-Imports System.Data.Entity.Infrastructure ' Added for DbUpdateException
+Imports System.Linq
+Imports System.Data.Entity.Validation
+Imports System.Data.Entity.Infrastructure
 
 Namespace Controllers
     Public Class EquiposController
@@ -22,11 +22,10 @@ Namespace Controllers
                         Optional estado As String = Nothing,
                         Optional regionId As Integer? = Nothing,
                         Optional ciudadId As Integer? = Nothing,
-                        Optional idTorneo As Integer? = Nothing) As JsonResult ' Added idTorneo parameter
+                        Optional idTorneo As Integer? = Nothing) As JsonResult
             Try
                 Dim query = db.Equipo.Include("Region").Include("Ciudad").AsQueryable()
 
-                ' Apply filters based on parameters received from the client
                 If Not String.IsNullOrWhiteSpace(nombre) Then
                     query = query.Where(Function(e) e.Nombre.Contains(nombre))
                 End If
@@ -46,9 +45,7 @@ Namespace Controllers
                     query = query.Where(Function(e) e.CiudadID = ciudadId.Value)
                 End If
 
-                ' NEW FILTER: Filter by Tournament ID
                 If idTorneo.HasValue AndAlso idTorneo.Value > 0 Then
-                    ' Join with TorneoEquipo to filter by teams associated with the given tournament
                     query = From e In query
                             Join te In db.TorneoEquipo On e.EquipoID Equals te.EquipoID
                             Where te.TorneoID = idTorneo.Value
@@ -102,10 +99,8 @@ Namespace Controllers
         <HttpPost()>
         Function Guardar(equipo As Equipo) As JsonResult
             Try
-                ' Server-side validation check
                 If ModelState.IsValid Then
                     If equipo.EquipoID = 0 Then
-                        ' Check for duplicate CodeEquipo before adding
                         If db.Equipo.Any(Function(e) e.CodigoEquipo = equipo.CodigoEquipo) Then
                             Return Json(New With {.success = False, .message = "Ya existe un equipo con este código."})
                         End If
@@ -113,12 +108,10 @@ Namespace Controllers
                     Else
                         Dim existingEquipo = db.Equipo.Find(equipo.EquipoID)
                         If existingEquipo IsNot Nothing Then
-                            ' Check for duplicate CodeEquipo on update, excluding the current entity
                             If db.Equipo.Any(Function(e) e.CodigoEquipo = equipo.CodigoEquipo AndAlso e.EquipoID <> equipo.EquipoID) Then
                                 Return Json(New With {.success = False, .message = "Ya existe otro equipo con este código."})
                             End If
 
-                            ' Update properties
                             existingEquipo.Nombre = equipo.Nombre
                             existingEquipo.CodigoEquipo = equipo.CodigoEquipo
                             existingEquipo.RegionID = equipo.RegionID
@@ -127,7 +120,6 @@ Namespace Controllers
                             existingEquipo.ELO = equipo.ELO
                             existingEquipo.TipoEquipo = equipo.TipoEquipo
                             existingEquipo.Estado = equipo.Estado
-                            ' Explicitly mark as modified if not all properties are updated via model binding
                             db.Entry(existingEquipo).State = EntityState.Modified
                         Else
                             Return Json(New With {.success = False, .message = "Equipo no encontrado para actualizar."})
@@ -136,11 +128,10 @@ Namespace Controllers
                     db.SaveChanges()
                     Return Json(New With {.success = True})
                 Else
-                    ' Return validation errors
                     Dim errors = ModelState.Values.SelectMany(Function(v) v.Errors).Select(Function(e) e.ErrorMessage).ToList()
                     Return Json(New With {.success = False, .message = String.Join(" ", errors)})
                 End If
-            Catch ex As DbEntityValidationException ' Specific for EF validation errors
+            Catch ex As DbEntityValidationException
                 For Each validationError In ex.EntityValidationErrors
                     For Each errorProperty In validationError.ValidationErrors
                         System.Diagnostics.Debug.WriteLine($"Property: {errorProperty.PropertyName}, Error: {errorProperty.ErrorMessage}")
@@ -160,9 +151,8 @@ Namespace Controllers
                     Return Json(New With {.success = False, .message = "Equipo no encontrado."}, JsonRequestBehavior.AllowGet)
                 End If
 
-                ' Serialize only the necessary fields, wrapped in a success object
                 Return Json(New With {
-                    .success = True, ' Consistent success flag
+                    .success = True,
                     .EquipoID = equipo.EquipoID,
                     .Nombre = equipo.Nombre,
                     .CodigoEquipo = equipo.CodigoEquipo,
@@ -193,7 +183,6 @@ Namespace Controllers
 
                 Return Json(New With {.success = True})
             Catch ex As DbUpdateException
-                ' This exception often indicates a foreign key constraint violation
                 System.Diagnostics.Debug.WriteLine($"DbUpdateException al eliminar equipo: {ex.Message}")
                 Return Json(New With {.success = False, .message = "Error al eliminar el equipo. Es posible que esté asociado a otros registros (ej. jugadores, partidos) y no se pueda eliminar directamente."})
             Catch ex As Exception

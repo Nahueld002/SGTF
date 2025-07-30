@@ -1,6 +1,6 @@
 ﻿Imports System.Collections.Generic
-Imports System.Configuration ' Added for ConfigurationManager
-Imports System.Data.SqlClient ' Added for SQL connection
+Imports System.Configuration
+Imports System.Data.SqlClient
 Imports System.Linq
 Imports System.Web.Mvc
 Imports System.Data.Entity.Core.EntityClient
@@ -10,7 +10,6 @@ Namespace Controllers
         Inherits Controller
         Dim db As FutbolDB2Entities = New FutbolDB2Entities()
 
-        ' GET: Torneo
         Function Index() As ActionResult
             Return View()
         End Function
@@ -93,7 +92,6 @@ Namespace Controllers
             Return New JsonResult With {.Data = torneo, .JsonRequestBehavior = JsonRequestBehavior.AllowGet}
         End Function
 
-        ' ============== MÉTODOS PARA CARGAR COMBOBOXES ==============
         Function CargarCiudades() As JsonResult
             Try
                 Dim ciudades = From c In db.Ciudad
@@ -178,13 +176,9 @@ Namespace Controllers
             Return Json(ciudades.ToList(), JsonRequestBehavior.AllowGet)
         End Function
 
-        ' NEW: Action to retrieve tournament standings
         <HttpGet()>
         Function RecuperarTablaPosiciones(torneoID As Integer, año As Integer) As JsonResult
             Try
-                ' --- MODIFICATION START ---
-
-                ' Get all teams participating in the specified tournament and year
                 Dim equiposParticipantes = From te In db.TorneoEquipo
                                            Join e In db.Equipo On te.EquipoID Equals e.EquipoID
                                            Where te.TorneoID = torneoID And te.AñoParticipacion = año
@@ -196,7 +190,6 @@ Namespace Controllers
                 Dim tablaPosiciones = New List(Of PosicionTabla)()
                 Dim equiposStats As New Dictionary(Of Integer, PosicionTabla)
 
-                ' Initialize stats for ALL participating teams
                 For Each equipoData In equiposParticipantes
                     equiposStats.Add(equipoData.EquipoID, New PosicionTabla With {
                     .Equipo = equipoData.EquipoNombre,
@@ -205,20 +198,16 @@ Namespace Controllers
                     })
                 Next
 
-                ' --- MODIFICATION END ---
-
-                ' Get all finished matches for the given tournament and year
                 Dim partidosDelTorneo = From p In db.Partido
                                         Join teLocal In db.TorneoEquipo On p.EquipoLocalTorneoEquipoID Equals teLocal.TorneoEquipoID
                                         Join teVisitante In db.TorneoEquipo On p.EquipoVisitanteTorneoEquipoID Equals teVisitante.TorneoEquipoID
-                                        Where p.TorneoID = torneoID And p.AñoParticipacion = año And p.Estado = "Finalizado" ' "Jugado" as per schema
+                                        Where p.TorneoID = torneoID And p.AñoParticipacion = año And p.Estado = "Finalizado"
                                         Select New With {
                                         .Partido = p,
                                         .EquipoLocalID = teLocal.EquipoID,
                                         .EquipoVisitanteID = teVisitante.EquipoID
                                         }
 
-                ' Calculate stats for each match (only for teams that are in equiposStats and have played)
                 For Each partidoData In partidosDelTorneo
                     Dim partido = partidoData.Partido
                     Dim idLocal = partidoData.EquipoLocalID
@@ -228,28 +217,23 @@ Namespace Controllers
                         Dim statsLocal = equiposStats(idLocal)
                         Dim statsVisitante = equiposStats(idVisitante)
 
-                        ' Update games played for both teams
                         statsLocal.PJ += 1
                         statsVisitante.PJ += 1
 
-                        ' Update goals for/against
                         statsLocal.GF += partido.GolesLocal.GetValueOrDefault()
                         statsLocal.GC += partido.GolesVisitante.GetValueOrDefault()
                         statsVisitante.GF += partido.GolesVisitante.GetValueOrDefault()
                         statsVisitante.GC += partido.GolesLocal.GetValueOrDefault()
 
                         If partido.GolesLocal > partido.GolesVisitante Then
-                            ' Local wins
                             statsLocal.PG += 1
                             statsLocal.PTS += 3
                             statsVisitante.PP += 1
                         ElseIf partido.GolesLocal < partido.GolesVisitante Then
-                            ' Visitor wins
                             statsVisitante.PG += 1
                             statsVisitante.PTS += 3
                             statsLocal.PP += 1
                         Else
-                            ' Draw
                             statsLocal.PE += 1
                             statsLocal.PTS += 1
                             statsVisitante.PE += 1
@@ -258,23 +242,20 @@ Namespace Controllers
                     End If
                 Next
 
-                ' Finalize DG and add to list
                 For Each kvp In equiposStats
                     kvp.Value.DG = kvp.Value.GF - kvp.Value.GC
                     tablaPosiciones.Add(kvp.Value)
                 Next
 
-                ' Order the standings (e.g., by PTS, then DG, then GF)
                 Dim posicionesOrdenadas = tablaPosiciones.OrderByDescending(Function(p) p.PTS) _
-                                                        .ThenByDescending(Function(p) p.DG) _
-                                                        .ThenByDescending(Function(p) p.GF) _
-                                                        .ToList()
+                                                         .ThenByDescending(Function(p) p.DG) _
+                                                         .ThenByDescending(Function(p) p.GF) _
+                                                         .ToList()
 
                 Return Json(posicionesOrdenadas, JsonRequestBehavior.AllowGet)
 
             Catch ex As Exception
                 System.Diagnostics.Debug.WriteLine($"Error al recuperar tabla de posiciones: {ex.Message}")
-                ' Return an empty list on error
                 Return Json(New List(Of PosicionTabla)(), JsonRequestBehavior.AllowGet)
             End Try
         End Function
@@ -288,21 +269,15 @@ Namespace Controllers
         <HttpPost()>
         Function SimularPartidos(torneoID As Integer, torneoNombre As String, año As Integer, fase As String) As ActionResult
             Try
-                ' 1. Get the full Entity Framework connection string from Web.config
                 Dim efConnectionString As String = ConfigurationManager.ConnectionStrings("FutbolDB2Entities").ConnectionString
-
-                ' 2. Extract the underlying pure SQL Server connection string
                 Dim entityBuilder As New EntityConnectionStringBuilder(efConnectionString)
                 Dim sqlConnectionString As String = entityBuilder.ProviderConnectionString
 
-                ' 3. Use the extracted pure SQL connection string with SqlConnection
                 Using conn As New SqlConnection(sqlConnectionString)
                     Using cmd As New SqlCommand("spSimularTorneoElo", conn)
                         cmd.CommandType = CommandType.StoredProcedure
-
-                        ' 4. CORRECTED PARAMETER NAMES TO MATCH THE STORED PROCEDURE DEFINITION
-                        cmd.Parameters.AddWithValue("@TorneoNombre", torneoNombre)      ' This passes the torneoNombre from the action method
-                        cmd.Parameters.AddWithValue("@AñoParticipacion", año)           ' This matches @AñoParticipacion in the SP
+                        cmd.Parameters.AddWithValue("@TorneoNombre", torneoNombre)
+                        cmd.Parameters.AddWithValue("@AñoParticipacion", año)
                         conn.Open()
                         cmd.ExecuteNonQuery()
                     End Using
@@ -319,20 +294,18 @@ Namespace Controllers
             End Try
         End Function
 
-
     End Class
 
-    ' Class to define the structure of the standings data
     Public Class PosicionTabla
         Public Property Equipo As String
-        Public Property PJ As Integer ' Partidos Jugados
-        Public Property PG As Integer ' Partidos Ganados
-        Public Property PE As Integer ' Partidos Empatados
-        Public Property PP As Integer ' Partidos Perdidos
-        Public Property GF As Integer ' Goles a Favor
-        Public Property GC As Integer ' Goles en Contra
-        Public Property DG As Integer ' Diferencia de Goles
-        Public Property PTS As Integer ' Puntos
+        Public Property PJ As Integer
+        Public Property PG As Integer
+        Public Property PE As Integer
+        Public Property PP As Integer
+        Public Property GF As Integer
+        Public Property GC As Integer
+        Public Property DG As Integer
+        Public Property PTS As Integer
     End Class
 
 End Namespace
